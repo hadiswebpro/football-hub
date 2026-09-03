@@ -55,17 +55,6 @@ button {
 
 .leagues {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 22px;
-}
-
-footer {
-    padding: 26px 24px 36px;
-    text-align: center;
-    color: #64748b;
-    font-size: 14px;
-}
-
-footer p {
-    opacity: 0.8;
 }
