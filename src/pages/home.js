@@ -2,48 +2,66 @@ import getCompetitions from "../api/competitions";
 import createLeagueCard from "../components/leagueCard";
 
 const importantLeagueIds = [
-    1,   // World Cup
-    4,   // Euro Championship
-    2,   // Champions League
-    3,   // Europa League
-
-    39,  // Premier League
-    40,  // Championship
-
-    140, // La Liga
-    141, // Segunda División
-
-    135, // Serie A
-    136, // Serie B
-
-    78,  // Bundesliga
-    79,  // 2. Bundesliga
-
-    61,  // Ligue 1
-    62,  // Ligue 2
+    1, 4, 2, 3,
+    39, 40,
+    140, 141,
+    135, 136,
+    78, 79,
+    61, 62,
 ];
 
-async function loadCompetitions() {
-    const data = await getCompetitions();
+function showLeagueModal(competition) {
+    const existingModal = document.querySelector(".league-modal");
+    existingModal?.remove();
 
-    const filteredLeagues = data.response.filter((competition) =>
-    importantLeagueIds.includes(competition.league.id));
+    const season = competition.seasons.find((item) => item.current === true);
+    const status = season ? getLeagueStatus(season.start, season.end) : "Unknown";
 
-    console.log(
-    filteredLeagues.map((competition) => ({
-        id: competition.league.id,
-        name: competition.league.name,
-        country: competition.country.name,
-    })))
+    const modal = document.createElement("div");
+    modal.className = "league-modal";
+    modal.innerHTML = `
+        <div class="league-modal__backdrop"></div>
+        <div class="league-modal__content" role="dialog" aria-modal="true" aria-label="${competition.league.name}">
+            <button class="league-modal__close" type="button" aria-label="Close">×</button>
+            <img src="${competition.league.logo}" alt="${competition.league.name} logo" class="league-modal__logo">
+            <h2>${competition.league.name}</h2>
+            <p>${competition.country.name}</p>
+            <span>${competition.league.type}</span>
+            <strong>Status: ${status}</strong>
+            ${season ? `<small>${formatDate(season.start)} — ${formatDate(season.end)}</small>` : ""}
+        </div>
+    `;
 
-    const container = document.querySelector(".leagues");
+    document.body.appendChild(modal);
 
-    filteredLeagues.forEach((competition) => {
-          const card = createLeagueCard(competition);
-          container.appendChild(card);
+    const close = () => modal.remove();
+    modal.querySelector(".league-modal__close").addEventListener("click", close);
+    modal.querySelector(".league-modal__backdrop").addEventListener("click", close);
+    document.addEventListener("keydown", function onKeyDown(event) {
+        if (event.key === "Escape") {
+            close();
+            document.removeEventListener("keydown", onKeyDown);
+        }
     });
 }
 
+async function loadCompetitions() {
+    const data = await getCompetitions();
+    const container = document.querySelector(".leagues");
 
+    if (!data?.response || !container) return;
+
+    const filteredLeagues = data.response.filter((competition) =>
+        importantLeagueIds.includes(competition.league.id)
+    );
+
+    filteredLeagues.forEach((competition) => {
+        container.appendChild(createLeagueCard(competition));
+    });
+
+    container.addEventListener("league:open", (event) => {
+        showLeagueModal(event.detail);
+    });
+}
 
 export default loadCompetitions;
