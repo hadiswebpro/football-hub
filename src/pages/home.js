@@ -1,5 +1,6 @@
 import getCompetitions from "../api/competitions";
 import createLeagueCard from "../components/leagueCard";
+import {formatDate, getLeagueStatus} from "../utils/date";
 
 const importantLeagueIds = [
     1, 4, 2, 3,
@@ -11,11 +12,12 @@ const importantLeagueIds = [
 ];
 
 function showLeagueModal(competition) {
-    const existingModal = document.querySelector(".league-modal");
-    existingModal?.remove();
+    document.querySelector(".league-modal")?.remove();
 
     const season = competition.seasons.find((item) => item.current === true);
-    const status = season ? getLeagueStatus(season.start, season.end) : "Unknown";
+    const status = season
+        ? getLeagueStatus(season.start, season.end)
+        : "Unknown";
 
     const modal = document.createElement("div");
     modal.className = "league-modal";
@@ -37,12 +39,15 @@ function showLeagueModal(competition) {
     const close = () => modal.remove();
     modal.querySelector(".league-modal__close").addEventListener("click", close);
     modal.querySelector(".league-modal__backdrop").addEventListener("click", close);
-    document.addEventListener("keydown", function onKeyDown(event) {
+
+    const handleEscape = (event) => {
         if (event.key === "Escape") {
             close();
-            document.removeEventListener("keydown", onKeyDown);
+            document.removeEventListener("keydown", handleEscape);
         }
-    });
+    };
+
+    document.addEventListener("keydown", handleEscape);
 }
 
 async function loadCompetitions() {
