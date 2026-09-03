@@ -1,32 +1,40 @@
-function createLeagueCard(league) {
-    const card = document.createElement("article");
+import {formatDate, getLeagueStatus} from "../utils/date";
 
-    card.classList.add("league-card");
+function createLeagueCard(competition) {
+  const card = document.createElement("article");
 
-    card.innerHTML = `
-        <div class="league-card__logo">
-            <img 
-                src="${league.logo}" 
-                alt="${league.name} logo"
-            >
-        </div>
+  card.classList.add("league-card");
 
-        <div class="league-card__content">
-            <h3 class="league-card__name">
-                ${league.name}
-            </h3>
+  const currentSeason = competition.seasons.find(
+    (season) => season.current === true,
+  );
 
-            <p class="league-card__country">
-                ${league.country}
-            </p>
+  const status = getLeagueStatus(currentSeason.start, currentSeason.end);
 
-            <p class="league-card__status">
-                ${league.status}
-            </p>
+  card.innerHTML = `
+        <img
+            src="${competition.league.logo}"
+            alt="${competition.league.name} logo"
+            class="league-logo"
+        >
+
+
+        <div class="league-info">
+            <h3>${competition.league.name}</h3>
+
+            <p>${competition.country.name}</p>
+
+            <span>${competition.league.type}</span>
+
+            <p>Status: ${status}</p>
+
+            <p>Start: ${formatDate(currentSeason.start)}</p>
+           
+            <p>End: ${formatDate(currentSeason.end)}</p>
         </div>
     `;
 
-    return card;
+  return card;
 }
 
 export default createLeagueCard;

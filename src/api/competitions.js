@@ -1,5 +1,5 @@
 const API_URL = "https://v3.football.api-sports.io/leagues";
-const API_KEY = "کلید خودت";
+const API_KEY = "";
 
 async function getCompetitions() {
     const response = await fetch(API_URL, {
