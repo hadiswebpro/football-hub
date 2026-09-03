@@ -1,0 +1,116 @@
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #111827;
+    border-bottom: 1px solid #1f2937;
+}
+
+.header__container {
+    width: min(1200px, calc(100% - 32px));
+    min-height: 72px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+.header__logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.header__logo-icon {
+    font-size: 24px;
+}
+
+.header__nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.header__nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 12px;
+    border-radius: 9px;
+    color: #d1d5db;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.header__nav-link:hover,
+.header__nav-link.active {
+    background: #1f2937;
+    color: #ffffff;
+}
+
+.header__nav-icon {
+    width: 17px;
+    height: 17px;
+}
+
+.header__search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    width: 280px;
+}
+
+.header__search-input {
+    width: 100%;
+    height: 40px;
+    padding: 0 42px 0 14px;
+    border: 1px solid #374151;
+    border-radius: 10px;
+    outline: none;
+    background: #1f2937;
+    color: #ffffff;
+}
+
+.header__search-input::placeholder {
+    color: #9ca3af;
+}
+
+.header__search-input:focus {
+    border-color: #22c55e;
+}
+
+.header__search-btn,
+.header__mobile-search-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    background: transparent;
+    color: #d1d5db;
+}
+
+.header__search-btn {
+    position: absolute;
+    right: 8px;
+    width: 30px;
+    height: 30px;
+}
+
+.header__search-btn svg,
+.header__mobile-search-btn svg {
+    width: 19px;
+    height: 19px;
+}
+
+.header__menu-btn,
+.header__mobile-search-btn,
+.header__search-dropdown {
+    display: none;
+}
