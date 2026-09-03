@@ -113,7 +113,25 @@
         transition: transform 0.25s ease, background 0.25s ease;
     }
 
-    .header__menu-btn:hover span {
+    .header__menu-btn.is-open span:nth-child(1) {
+        transform: translateY(6px) rotate(45deg);
+    }
+
+    .header__menu-btn.is-open span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .header__menu-btn.is-open span:nth-child(3) {
+        transform: translateY(-6px) rotate(-45deg);
+    }
+
+    .header__menu-btn.is-open {
+        border-color: rgba(57, 255, 136, 0.3);
+        background: rgba(34, 197, 94, 0.1);
+        box-shadow: 0 0 18px rgba(57, 255, 136, 0.12);
+    }
+
+    .header__menu-btn.is-open span {
         background: #39ff88;
     }
 
@@ -132,6 +150,30 @@
         display: none;
     }
 
+    .header__nav.is-open {
+        position: absolute;
+        top: 64px;
+        left: 0;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 5px;
+        padding: 12px;
+        background: rgba(5, 8, 7, 0.98);
+        border: 1px solid rgba(57, 255, 136, 0.2);
+        border-top: 0;
+        border-radius: 0 0 18px 18px;
+        box-shadow: 0 18px 34px rgba(5, 8, 7, 0.3), 0 0 22px rgba(34, 197, 94, 0.08);
+        animation: menuDrop 0.25s ease both;
+    }
+
+    .header__nav.is-open .header__nav-link {
+        width: 100%;
+        justify-content: flex-start;
+        padding: 13px 14px;
+    }
+
     .header__mobile-search-btn {
         display: inline-flex;
         flex-shrink: 0;
@@ -140,7 +182,14 @@
         border-radius: 10px;
     }
 
+    .header__mobile-search-btn[aria-expanded="true"] {
+        color: #39ff88;
+        background: rgba(34, 197, 94, 0.1);
+        box-shadow: 0 0 16px rgba(57, 255, 136, 0.12);
+    }
+
     .header__search-dropdown {
+        display: none;
         position: absolute;
         top: 64px;
         left: 9px;
@@ -151,6 +200,11 @@
         border-top: 0;
         border-radius: 0 0 15px 15px;
         box-shadow: 0 14px 30px rgba(5, 8, 7, 0.28), 0 0 20px rgba(34, 197, 94, 0.08);
+    }
+
+    .header__search-dropdown.is-open {
+        display: block;
+        animation: menuDrop 0.25s ease both;
     }
 
     .header__search-dropdown input {
@@ -188,5 +242,16 @@
 
     .header__logo-text {
         display: none;
+    }
+}
+
+@keyframes menuDrop {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
