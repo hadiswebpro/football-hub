@@ -15,9 +15,7 @@
     --gray: #64748b;
 }
 
-html {
-    scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
 body {
     min-height: 100vh;
@@ -38,14 +36,8 @@ body::before {
     z-index: -1;
 }
 
-button,
-input {
-    font: inherit;
-}
-
-button {
-    cursor: pointer;
-}
+button, input { font: inherit; }
+button { cursor: pointer; }
 
 #app {
     width: min(1240px, calc(100% - 40px));
@@ -55,13 +47,16 @@ button {
 
 .home-section {
     scroll-margin-top: 90px;
+    margin-bottom: 78px;
 }
+
+.home-section:last-child { margin-bottom: 0; }
 
 .section-heading {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 26px;
+    margin-bottom: 30px;
     text-align: center;
 }
 
@@ -92,23 +87,13 @@ button {
 }
 
 @media (max-width: 1050px) {
-    #app {
-        width: min(960px, calc(100% - 32px));
-    }
-
-    .leagues {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
+    #app { width: min(960px, calc(100% - 32px)); }
+    .leagues { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (max-width: 820px) {
-    #app {
-        width: calc(100% - 28px);
-    }
-
-    .leagues {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+    #app { width: calc(100% - 28px); }
+    .leagues { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 640px) {
@@ -117,26 +102,13 @@ button {
         padding: 28px 0 45px;
     }
 
-    .section-heading {
-        margin-bottom: 20px;
-    }
-
-    .section-heading h2 {
-        font-size: 28px;
-    }
-
-    .section-heading p {
-        font-size: 13px;
-    }
-
-    .leagues {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
-    }
+    .home-section { margin-bottom: 58px; }
+    .section-heading { margin-bottom: 22px; }
+    .section-heading h2 { font-size: 28px; }
+    .section-heading p { font-size: 13px; }
+    .leagues { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 }
 
 @media (max-width: 380px) {
-    .leagues {
-        gap: 10px;
-    }
+    .leagues { gap: 10px; }
 }
