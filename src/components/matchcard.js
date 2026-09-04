@@ -51,13 +51,8 @@ function createMatchCard(match) {
     `;
 
     const openCard = () => {
-        card.classList.add("is-open");
-        card.dispatchEvent(
-            new CustomEvent("match:open", {
-                bubbles: true,
-                detail: match,
-            }),
-        );
+        sessionStorage.setItem("football-hub-selected-match", JSON.stringify(match));
+        window.location.hash = "match";
     };
 
     card.addEventListener("click", openCard);
