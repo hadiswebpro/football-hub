@@ -37,12 +37,67 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 18px;
     }
+
+    .hero {
+        min-height: 460px;
+        margin-bottom: 48px;
+    }
+
+    .hero__center-circle {
+        width: 220px;
+        height: 220px;
+    }
 }
 
 @media (max-width: 640px) {
-    #app {
-        width: calc(100% - 20px);
-        padding: 28px 0 45px;
+    .hero {
+        min-height: 430px;
+        margin-bottom: 42px;
+        border-radius: 22px;
+    }
+
+    .hero__content {
+        width: calc(100% - 28px);
+    }
+
+    .hero__eyebrow {
+        font-size: 9px;
+        letter-spacing: 0.18em;
+    }
+
+    .hero h1 {
+        font-size: clamp(38px, 12vw, 54px);
+    }
+
+    .hero__content p {
+        margin-top: 18px;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .hero__button {
+        margin-top: 24px;
+        min-width: 175px;
+        padding: 12px 16px;
+        font-size: 13px;
+    }
+
+    .hero__pitch {
+        transform: perspective(600px) rotateX(58deg) scale(1.5);
+    }
+
+    .hero__center-circle {
+        width: 190px;
+        height: 190px;
+    }
+
+    .hero__ball {
+        font-size: 38px;
+    }
+
+    .hero__glow {
+        width: 200px;
+        height: 200px;
     }
 
     .leagues {
@@ -241,6 +296,18 @@
 }
 
 @media (max-width: 380px) {
+    .hero {
+        min-height: 400px;
+    }
+
+    .hero h1 {
+        font-size: 36px;
+    }
+
+    .hero__content p {
+        font-size: 13px;
+    }
+
     .league-card {
         min-height: 250px;
         padding: 13px;
@@ -254,8 +321,6 @@
     .league-info h3 {
         font-size: 14px;
     }
-
-    
 }
 
 @keyframes menuDrop {
