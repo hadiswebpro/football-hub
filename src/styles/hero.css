@@ -1,0 +1,219 @@
+.hero {
+    position: relative;
+    min-height: 520px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 58px;
+    overflow: hidden;
+    isolation: isolate;
+    border: 1px solid rgba(57, 255, 136, 0.28);
+    border-radius: 30px;
+    background:
+        radial-gradient(circle at 50% 50%, rgba(22, 163, 74, 0.2), transparent 34%),
+        linear-gradient(135deg, #020504 0%, #06140c 55%, #020504 100%);
+    box-shadow:
+        0 25px 70px rgba(5, 8, 7, 0.18),
+        0 0 45px rgba(57, 255, 136, 0.08);
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(rgba(57, 255, 136, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(57, 255, 136, 0.035) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: linear-gradient(to bottom, transparent, black 25%, black 75%, transparent);
+    z-index: -2;
+}
+
+.hero::after {
+    content: "";
+    position: absolute;
+    inset: -30%;
+    background: linear-gradient(110deg, transparent 42%, rgba(57, 255, 136, 0.07) 50%, transparent 58%);
+    transform: translateX(-35%) rotate(8deg);
+    animation: heroReflection 7s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 3;
+}
+
+.hero__content {
+    position: relative;
+    z-index: 4;
+    width: min(620px, calc(100% - 40px));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.hero__eyebrow {
+    margin-bottom: 18px;
+    color: #39ff88;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.24em;
+    text-shadow: 0 0 14px rgba(57, 255, 136, 0.55);
+}
+
+.hero h1 {
+    color: #ffffff;
+    font-size: clamp(42px, 6vw, 72px);
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+}
+
+.hero h1 span {
+    color: #39ff88;
+    text-shadow: 0 0 22px rgba(57, 255, 136, 0.35);
+}
+
+.hero__content p {
+    max-width: 510px;
+    margin-top: 22px;
+    color: #b7c4bd;
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+.hero__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 30px;
+    min-width: 190px;
+    padding: 13px 20px;
+    border: 1px solid #39ff88;
+    border-radius: 12px;
+    background: #39ff88;
+    color: #031008;
+    font-weight: 800;
+    box-shadow: 0 0 0 rgba(57, 255, 136, 0);
+    transition: transform 0.2s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.hero__button:hover,
+.hero__button:focus-visible {
+    background: #ffffff;
+    box-shadow: 0 0 14px rgba(57, 255, 136, 0.45), 0 0 35px rgba(57, 255, 136, 0.2);
+    transform: translateY(-3px);
+    outline: none;
+}
+
+.hero__button:active {
+    transform: scale(0.97);
+}
+
+.hero__pitch {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0.45;
+    transform: perspective(700px) rotateX(58deg) scale(1.25);
+    transform-origin: center 80%;
+}
+
+.hero__pitch-line {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    height: 1px;
+    background: rgba(57, 255, 136, 0.4);
+    box-shadow: 0 0 10px rgba(57, 255, 136, 0.3);
+}
+
+.hero__pitch-line--top { top: 24%; }
+.hero__pitch-line--bottom { bottom: 18%; }
+
+.hero__center-circle {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 260px;
+    height: 260px;
+    border: 1px solid rgba(57, 255, 136, 0.45);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 18px rgba(57, 255, 136, 0.08);
+}
+
+.hero__center-dot {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #39ff88;
+    box-shadow: 0 0 14px #39ff88;
+    transform: translate(-50%, -50%);
+}
+
+.hero__ball {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 2;
+    font-size: 48px;
+    filter: drop-shadow(0 0 13px rgba(57, 255, 136, 0.45));
+    transform: translate(-50%, -50%);
+    animation: heroBall 3s ease-in-out infinite;
+}
+
+.hero__glow {
+    position: absolute;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    filter: blur(55px);
+    opacity: 0.18;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.hero__glow--one {
+    top: -100px;
+    left: -80px;
+    background: #16a34a;
+    animation: glowMoveOne 8s ease-in-out infinite alternate;
+}
+
+.hero__glow--two {
+    right: -90px;
+    bottom: -120px;
+    background: #39ff88;
+    animation: glowMoveTwo 9s ease-in-out infinite alternate;
+}
+
+@keyframes heroBall {
+    0%, 100% { transform: translate(-50%, -50%) translateY(-14px) rotate(-7deg); }
+    50% { transform: translate(-50%, -50%) translateY(14px) rotate(7deg); }
+}
+
+@keyframes heroReflection {
+    0%, 35% { transform: translateX(-45%) rotate(8deg); }
+    65%, 100% { transform: translateX(45%) rotate(8deg); }
+}
+
+@keyframes glowMoveOne {
+    from { transform: translate(0, 0) scale(1); }
+    to { transform: translate(90px, 45px) scale(1.2); }
+}
+
+@keyframes glowMoveTwo {
+    from { transform: translate(0, 0) scale(1); }
+    to { transform: translate(-80px, -40px) scale(1.15); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero::after,
+    .hero__ball,
+    .hero__glow--one,
+    .hero__glow--two {
+        animation: none;
+    }
+}
