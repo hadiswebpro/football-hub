@@ -255,9 +255,7 @@
         font-size: 14px;
     }
 
-    .header__logo-text {
-        display: none;
-    }
+    
 }
 
 @keyframes menuDrop {
