@@ -1,6 +1,7 @@
 import getCompetitions from "../api/competitions";
+import createHero from "../components/hero";
 import createLeagueCard from "../components/leagueCard";
-import {formatDate, getLeagueStatus} from "../utils/date";
+import {getLeagueStatus} from "../utils/date";
 
 const importantLeagueIds = [
     1, 4, 2, 3,
@@ -11,48 +12,31 @@ const importantLeagueIds = [
     61, 62,
 ];
 
-function showLeagueModal(competition) {
-    document.querySelector(".league-modal")?.remove();
+function renderHomeSections() {
+    const app = document.querySelector("#app");
 
-    const season = competition.seasons.find((item) => item.current === true);
-    const status = season
-        ? getLeagueStatus(season.start, season.end)
-        : "Unknown";
+    if (!app) return null;
 
-    const modal = document.createElement("div");
-    modal.className = "league-modal";
-    modal.innerHTML = `
-        <div class="league-modal__backdrop"></div>
-        <div class="league-modal__content" role="dialog" aria-modal="true" aria-label="${competition.league.name}">
-            <button class="league-modal__close" type="button" aria-label="Close">×</button>
-            <img src="${competition.league.logo}" alt="${competition.league.name} logo" class="league-modal__logo">
-            <h2>${competition.league.name}</h2>
-            <p>${competition.country.name}</p>
-            <span>${competition.league.type}</span>
-            <strong>Status: ${status}</strong>
-            ${season ? `<small>${formatDate(season.start)} — ${formatDate(season.end)}</small>` : ""}
-        </div>
+    app.innerHTML = `
+        <section class="home-section home-section--leagues">
+            <div class="section-heading">
+                <span class="section-heading__eyebrow">EXPLORE</span>
+                <h2>Top Leagues</h2>
+                <p>Follow the competitions that matter most.</p>
+            </div>
+
+            <section class="leagues"></section>
+        </section>
     `;
 
-    document.body.appendChild(modal);
+    app.prepend(createHero());
 
-    const close = () => modal.remove();
-    modal.querySelector(".league-modal__close").addEventListener("click", close);
-    modal.querySelector(".league-modal__backdrop").addEventListener("click", close);
-
-    const handleEscape = (event) => {
-        if (event.key === "Escape") {
-            close();
-            document.removeEventListener("keydown", handleEscape);
-        }
-    };
-
-    document.addEventListener("keydown", handleEscape);
+    return app.querySelector(".leagues");
 }
 
 async function loadCompetitions() {
+    const container = renderHomeSections();
     const data = await getCompetitions();
-    const container = document.querySelector(".leagues");
 
     if (!data?.response || !container) return;
 
@@ -61,11 +45,15 @@ async function loadCompetitions() {
     );
 
     filteredLeagues.forEach((competition) => {
-        container.appendChild(createLeagueCard(competition));
-    });
+        const currentSeason = competition.seasons.find(
+            (season) => season.current === true,
+        );
 
-    container.addEventListener("league:open", (event) => {
-        showLeagueModal(event.detail);
+        if (currentSeason) {
+            getLeagueStatus(currentSeason.start, currentSeason.end);
+        }
+
+        container.appendChild(createLeagueCard(competition));
     });
 }
 
