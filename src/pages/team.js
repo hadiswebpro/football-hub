@@ -1,4 +1,5 @@
 import { getTeam, getTeamFixtures, getTeamRecentFixtures } from "../api/team";
+import getTeamSquad from "../api/teamSquad";
 import createMatchCard from "../components/matchcard";
 
 const SELECTED_TEAM_KEY = "football-hub-selected-team";
@@ -46,6 +47,60 @@ function renderMatches(container, fixtures, emptyText) {
     matches.forEach((match) => container.appendChild(createMatchCard(match)));
 }
 
+function getSquadGroups(players) {
+    const groups = {
+        Goalkeepers: [],
+        Defenders: [],
+        Midfielders: [],
+        Attackers: []
+    };
+
+    players.forEach((player) => {
+        const position = (player.position ?? "").toLowerCase();
+        if (position.includes("goalkeeper")) groups.Goalkeepers.push(player);
+        else if (position.includes("defender")) groups.Defenders.push(player);
+        else if (position.includes("midfielder")) groups.Midfielders.push(player);
+        else if (position.includes("attacker") || position.includes("forward")) groups.Attackers.push(player);
+    });
+
+    return groups;
+}
+
+function renderSquad(target, players) {
+    if (!players.length) {
+        target.innerHTML = `<div class="team-page__empty"><h2>No squad data</h2><p>There is no player data available for this team.</p></div>`;
+        return;
+    }
+
+    const groups = getSquadGroups(players);
+    const sections = Object.entries(groups)
+        .filter(([, group]) => group.length)
+        .map(([title, group]) => `
+            <section class="team-page__squad-group">
+                <div class="team-page__squad-group-heading">
+                    <div><span>TEAM SQUAD</span><h3>${title}</h3></div>
+                    <strong>${group.length}</strong>
+                </div>
+                <div class="team-page__player-grid">
+                    ${group.map((player) => `
+                        <article class="team-page__player-card">
+                            <div class="team-page__player-photo">
+                                <img src="${player.photo ?? ""}" alt="${player.name ?? "Player"}" loading="lazy">
+                                <span>${player.number ?? "—"}</span>
+                            </div>
+                            <div class="team-page__player-info">
+                                <h4>${player.name ?? "Unknown Player"}</h4>
+                                <p>${player.position ?? title}</p>
+                            </div>
+                        </article>
+                    `).join("")}
+                </div>
+            </section>
+        `).join("");
+
+    target.innerHTML = sections || `<div class="team-page__empty"><h2>Squad positions unavailable</h2><p>Player data was returned, but positions could not be grouped.</p></div>`;
+}
+
 function createTeamPage() {
     const app = document.querySelector("#app");
     const selected = getSelectedTeam();
@@ -74,6 +129,10 @@ function createTeamPage() {
                 <div class="team-page__tabs"><button class="is-active" data-view="upcoming" type="button">Upcoming</button><button data-view="recent" type="button">Recent Results</button></div>
                 <div class="team-page__matches" data-upcoming>Loading matches…</div>
                 <div class="team-page__matches" data-recent hidden>Loading results…</div>
+            </section>
+            <section class="team-page__section team-page__squad-section">
+                <div class="team-page__heading"><span>CLUB ROSTER</span><h2>Squad</h2><p>Players currently listed in this team's squad.</p></div>
+                <div class="team-page__squad" data-squad><div class="team-page__empty">Loading squad…</div></div>
             </section>
         </section>
     `;
@@ -116,6 +175,14 @@ function createTeamPage() {
         } catch {
             app.querySelector("[data-upcoming]").innerHTML = `<div class="team-page__empty">Could not load team matches. Please check your API key.</div>`;
             app.querySelector("[data-recent]").innerHTML = `<div class="team-page__empty">Could not load team results. Please check your API key.</div>`;
+        }
+
+        try {
+            const data = await getTeamSquad(selected.id);
+            const players = data.response?.[0]?.players ?? [];
+            renderSquad(app.querySelector("[data-squad]"), players);
+        } catch {
+            app.querySelector("[data-squad]").innerHTML = `<div class="team-page__empty"><h2>Could not load squad</h2><p>Please check your API key and try again.</p></div>`;
         }
     })();
 }
