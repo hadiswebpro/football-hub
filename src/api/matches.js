@@ -1,16 +1,10 @@
-
 const API_BASE = "https://v3.football.api-sports.io";
-
-
 const API_URL = "https://v3.football.api-sports.io/fixtures";
 const API_KEY = "";
 
-
 async function request(path) {
     const response = await fetch(`${API_BASE}${path}`, {
-        headers: {
-            "x-apisports-key": API_KEY
-        }
+        headers: { "x-apisports-key": API_KEY }
     });
 
     if (!response.ok) {
@@ -32,6 +26,14 @@ async function getLiveMatches() {
 
 async function getMatchesByDate(date) {
     return request(`/fixtures?date=${encodeURIComponent(date)}`);
+}
+
+async function getLeagueFixtures(leagueId, season, next = 20) {
+    return request(`/fixtures?league=${encodeURIComponent(leagueId)}&season=${encodeURIComponent(season)}&next=${encodeURIComponent(next)}`);
+}
+
+async function getLeagueRecentFixtures(leagueId, season, last = 20) {
+    return request(`/fixtures?league=${encodeURIComponent(leagueId)}&season=${encodeURIComponent(season)}&last=${encodeURIComponent(last)}`);
 }
 
 async function getFixture(fixtureId) {
@@ -69,6 +71,8 @@ async function getFixtureDetails(fixtureId) {
 export {
     getLiveMatches,
     getMatchesByDate,
+    getLeagueFixtures,
+    getLeagueRecentFixtures,
     getFixture,
     getFixtureEvents,
     getFixtureStatistics,
