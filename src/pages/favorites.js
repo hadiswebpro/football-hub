@@ -1,12 +1,11 @@
 import getCompetitions from "../api/competitions";
-import { getTeam } from "../api/team";
 import createLeagueCard from "../components/leagueCard";
 import createTeamCard from "../components/teamCard";
 
 const TEAM_FAVORITES_KEY = "football-hub-favorite-teams";
 const LEAGUE_FAVORITES_KEY = "football-hub-favorite-leagues";
 
-function readIds(key) {
+function readFavorites(key) {
     try {
         const value = JSON.parse(localStorage.getItem(key));
         return Array.isArray(value) ? value : [];
@@ -15,23 +14,16 @@ function readIds(key) {
     }
 }
 
-async function loadFavoriteTeams(ids) {
-    const results = await Promise.all(ids.map(async (id) => {
-        try {
-            const data = await getTeam(id);
-            const team = data.response?.[0]?.team;
-            if (!team) return null;
-            return {
-                id: team.id,
-                name: team.name ?? "Team",
-                country: team.country ?? "International",
-                logo: team.logo ?? ""
-            };
-        } catch {
-            return null;
-        }
-    }));
-    return results.filter(Boolean);
+function normalizeFavoriteTeam(item) {
+    if (typeof item === "number" || typeof item === "string") return null;
+    if (!item?.id) return null;
+    return {
+        id: Number(item.id),
+        name: item.name ?? "Team",
+        country: item.country ?? "International",
+        league: item.league ?? "",
+        logo: item.logo ?? ""
+    };
 }
 
 async function loadFavoriteLeagues(ids) {
@@ -69,28 +61,28 @@ function createFavoritesPage() {
     const leaguesTarget = app.querySelector("[data-favorite-leagues]");
     const teamCount = app.querySelector("[data-team-count]");
     const leagueCount = app.querySelector("[data-league-count]");
-    const teamIds = readIds(TEAM_FAVORITES_KEY);
-    const leagueIds = readIds(LEAGUE_FAVORITES_KEY);
+    const savedTeams = readFavorites(TEAM_FAVORITES_KEY);
+    const savedLeagues = readFavorites(LEAGUE_FAVORITES_KEY);
+    const favoriteTeams = savedTeams.map(normalizeFavoriteTeam).filter(Boolean);
+    const legacyTeamIds = savedTeams.filter((item) => typeof item === "number" || typeof item === "string").map(Number);
+    const leagueIds = savedLeagues.map(Number).filter(Number.isFinite);
 
-    teamCount.textContent = teamIds.length;
+    teamCount.textContent = favoriteTeams.length + legacyTeamIds.length;
     leagueCount.textContent = leagueIds.length;
 
     const renderEmpty = (target, title, text) => {
         target.innerHTML = `<div class="favorites-page__empty"><span>★</span><h3>${title}</h3><p>${text}</p></div>`;
     };
 
-    if (!teamIds.length) {
-        renderEmpty(teamsTarget, "No favorite teams yet", "Tap the star on any team card to save it here.");
+    if (!favoriteTeams.length) {
+        if (legacyTeamIds.length) {
+            renderEmpty(teamsTarget, "Older favorites", "Reopen these teams from the Teams directory to refresh their saved information.");
+        } else {
+            renderEmpty(teamsTarget, "No favorite teams yet", "Tap the star on any team card to save it here.");
+        }
     } else {
-        teamsTarget.innerHTML = `<div class="favorites-page__loading">Loading favorite teams…</div>`;
-        loadFavoriteTeams(teamIds).then((teams) => {
-            teamCount.textContent = teams.length;
-            if (!teams.length) renderEmpty(teamsTarget, "No favorite teams found", "Your saved teams could not be loaded.");
-            else {
-                teamsTarget.innerHTML = "";
-                teams.forEach((team) => teamsTarget.appendChild(createTeamCard(team)));
-            }
-        });
+        teamsTarget.innerHTML = "";
+        favoriteTeams.forEach((team) => teamsTarget.appendChild(createTeamCard(team)));
     }
 
     if (!leagueIds.length) {
