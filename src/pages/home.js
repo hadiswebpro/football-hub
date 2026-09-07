@@ -3,8 +3,20 @@ import { getLiveMatches, getMatchesByDate } from "../api/matches";
 import createHero from "../components/hero";
 import createMatchCard from "../components/matchcard";
 import createLeagueCard from "../components/leagueCard";
+import createTeamCard from "../components/teamCard";
 
 const importantLeagueIds = [1, 4, 2, 3, 39, 40, 140, 141, 135, 136, 78, 79, 61, 62];
+
+const popularTeams = [
+    { id: 541, name: "Real Madrid", country: "Spain", league: "La Liga", logo: "https://media.api-sports.io/football/teams/541.png" },
+    { id: 529, name: "Barcelona", country: "Spain", league: "La Liga", logo: "https://media.api-sports.io/football/teams/529.png" },
+    { id: 50, name: "Manchester City", country: "England", league: "Premier League", logo: "https://media.api-sports.io/football/teams/50.png" },
+    { id: 40, name: "Liverpool", country: "England", league: "Premier League", logo: "https://media.api-sports.io/football/teams/40.png" },
+    { id: 157, name: "Bayern Munich", country: "Germany", league: "Bundesliga", logo: "https://media.api-sports.io/football/teams/157.png" },
+    { id: 85, name: "Paris Saint-Germain", country: "France", league: "Ligue 1", logo: "https://media.api-sports.io/football/teams/85.png" },
+    { id: 42, name: "Arsenal", country: "England", league: "Premier League", logo: "https://media.api-sports.io/football/teams/42.png" },
+    { id: 33, name: "Manchester United", country: "England", league: "Premier League", logo: "https://media.api-sports.io/football/teams/33.png" }
+];
 
 function getDate(offset = 0) {
     const date = new Date();
@@ -61,6 +73,10 @@ function renderHomeSections() {
             <div class="section-heading"><span class="section-heading__eyebrow">EXPLORE</span><h2>Top Leagues</h2><p>Follow the competitions that matter most.</p></div>
             <section class="leagues"></section>
         </section>
+        <section class="home-section home-section--teams">
+            <div class="section-heading"><span class="section-heading__eyebrow">FAN FAVORITES</span><h2>Popular Teams</h2><p>Keep up with the biggest clubs in world football.</p></div>
+            <section class="teams"></section>
+        </section>
     `;
 
     app.prepend(createHero());
@@ -68,7 +84,8 @@ function renderHomeSections() {
         live: app.querySelector(".matches--live"),
         upcoming: app.querySelector(".matches--upcoming"),
         latest: app.querySelector(".matches--latest"),
-        leagues: app.querySelector(".leagues")
+        leagues: app.querySelector(".leagues"),
+        teams: app.querySelector(".teams")
     };
 }
 
@@ -125,6 +142,10 @@ function renderMatches(containers, liveFixtures, upcomingFixtures) {
     setupMatchViewControls(containers);
 }
 
+function renderPopularTeams(container) {
+    popularTeams.forEach((team) => container.appendChild(createTeamCard(team)));
+}
+
 async function loadCompetitions() {
     const containers = renderHomeSections();
     if (!containers) return;
@@ -132,6 +153,7 @@ async function loadCompetitions() {
     containers.live.innerHTML = `<div class="matches__empty">Loading live matches…</div>`;
     containers.upcoming.innerHTML = `<div class="matches__empty">Loading upcoming matches…</div>`;
     containers.latest.innerHTML = `<div class="matches__empty">Loading latest results…</div>`;
+    renderPopularTeams(containers.teams);
 
     try {
         const [liveData, todayData, tomorrowData] = await Promise.all([
