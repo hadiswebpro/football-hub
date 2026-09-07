@@ -86,12 +86,32 @@ button { cursor: pointer; }
     gap: 22px;
 }
 
-/* Keep every home section heading centered, including headings with extra controls. */
 .home-section > .section-heading,
 .home-section .section-heading {
     width: 100%;
     align-items: center;
     text-align: center;
+}
+
+/* Keep the heading itself centered; the action link must not shift its center. */
+.home-section-heading-row {
+    position: relative;
+    display: block;
+}
+
+.home-section-heading-row > div {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.home-section-heading-row .home-section__link {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
 }
 
 @media (max-width: 1050px) {
@@ -115,6 +135,14 @@ button { cursor: pointer; }
     .section-heading h2 { font-size: 28px; }
     .section-heading p { font-size: 13px; }
     .leagues { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+
+    .home-section-heading-row .home-section__link {
+        position: static;
+        display: inline-flex;
+        align-self: center;
+        margin-top: 12px;
+        transform: none;
+    }
 }
 
 @media (max-width: 380px) {
