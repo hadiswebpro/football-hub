@@ -1,13 +1,13 @@
-.matches-page { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 34px 0 70px; }
-.matches-page__top { display:flex; justify-content:space-between; align-items:end; gap:24px; margin-bottom:28px; }
-.matches-page__top h1 { margin:5px 0 8px; color:#f8fafc; font-size:clamp(34px,5vw,52px); line-height:1; }
-.matches-page__top p { margin:0; color:#8b9a91; font-size:13px; }
-.matches-page__controls { display:flex; flex-direction:column; align-items:stretch; gap:8px; min-width:330px; }
-.matches-page__search { width:100%; height:38px; padding:0 12px; border:1px solid rgba(57,255,136,.16); border-radius:10px; outline:none; background:#07100b; color:#fff; font:inherit; font-size:11px; }
-.matches-page__search::placeholder { color:#64716a; }
-.matches-page__search:focus { border-color:#39ff88; box-shadow:0 0 0 2px rgba(57,255,136,.08),0 0 18px rgba(57,255,136,.08); }
-.matches-page__date-controls { display:flex; gap:6px; padding:5px; border:1px solid rgba(57,255,136,.16); border-radius:13px; background:rgba(7,16,11,.88); box-shadow:0 12px 35px rgba(0,0,0,.18); }
-.matches-page__date-button { min-width:96px; padding:10px 14px; border:1px solid transparent; border-radius:9px; background:transparent; color:#aab5ae; cursor:pointer; font:inherit; font-size:10px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; transition:.25s ease; }
+.matches-page { width:min(1180px,calc(100% - 32px)); margin:0 auto; padding:34px 0 70px; }
+.matches-page__top { display:flex; flex-direction:column; align-items:stretch; gap:18px; margin-bottom:28px; }
+.matches-page__heading h1 { margin:5px 0 8px; color:#121715; font-size:clamp(34px,5vw,52px); line-height:1; }
+.matches-page__heading p { margin:0; color:#4f5b54; font-size:13px; }
+.matches-page__controls { display:flex; flex-direction:column; align-items:stretch; gap:10px; width:100%; }
+.matches-page__search { width:100%; max-width:560px; height:48px; padding:0 16px; border:1px solid rgba(57,255,136,.2); border-radius:12px; outline:none; background:rgba(7,16,11,.94); color:#fff; font:inherit; font-size:13px; box-sizing:border-box; }
+.matches-page__search::placeholder { color:#7d8b84; }
+.matches-page__search:focus { border-color:rgba(57,255,136,.6); box-shadow:0 0 0 2px rgba(57,255,136,.08),0 0 20px rgba(57,255,136,.1); }
+.matches-page__date-controls { align-self:center; display:flex; gap:6px; padding:5px; border:1px solid rgba(57,255,136,.16); border-radius:13px; background:rgba(7,16,11,.88); box-shadow:0 12px 35px rgba(0,0,0,.18); }
+.matches-page__date-button { min-width:110px; padding:10px 16px; border:1px solid transparent; border-radius:9px; background:transparent; color:#aab5ae; cursor:pointer; font:inherit; font-size:10px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; transition:.25s ease; }
 .matches-page__date-button:hover { color:#fff; border-color:rgba(57,255,136,.3); }
 .matches-page__date-button.is-active { color:#07100b; background:#39ff88; box-shadow:0 0 18px rgba(57,255,136,.2); }
 .matches-page__summary { display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; padding:13px 16px; border:1px solid rgba(57,255,136,.16); border-radius:13px; background:linear-gradient(110deg,rgba(10,22,15,.96),rgba(6,13,9,.84)); }
@@ -29,4 +29,4 @@
 .matches-page__empty h2 { margin:8px 0 5px; color:#f8fafc; font-size:20px; }
 .matches-page__empty p { margin:0; color:#8b9991; font-size:12px; }
 .matches-page__loading { min-height:220px; display:grid; place-items:center; color:#aeb9b3; font-size:12px; }
-@media (max-width:640px) { .matches-page{width:min(100% - 20px,1180px);padding-top:22px}.matches-page__top{align-items:stretch;flex-direction:column}.matches-page__controls{min-width:0}.matches-page__date-controls{width:100%}.matches-page__date-button{flex:1;min-width:0}.matches-page__league{padding:15px;border-radius:17px}.matches-page__league-heading{align-items:end}.matches-page__league-title h2{font-size:16px}.matches-page__league-scroll{margin-right:-10px;padding-right:10px}.matches-page__league-scroll .match-card{flex-basis:245px;width:245px} }
+@media (max-width:640px) { .matches-page{width:min(100% - 20px,1180px);padding-top:22px}.matches-page__top{gap:16px}.matches-page__search{max-width:none;height:48px}.matches-page__date-controls{width:100%;align-self:stretch}.matches-page__date-button{flex:1;min-width:0}.matches-page__league{padding:15px;border-radius:17px}.matches-page__league-heading{align-items:end}.matches-page__league-title h2{font-size:16px}.matches-page__league-scroll{margin-right:-10px;padding-right:10px}.matches-page__league-scroll .match-card{flex-basis:245px;width:245px} }
