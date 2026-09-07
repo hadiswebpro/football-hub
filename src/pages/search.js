@@ -28,6 +28,10 @@ function normalizeMatch(item) {
     };
 }
 
+function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
+}
+
 function createSearchPage() {
     const app = document.querySelector("#app");
     if (!app) return;
@@ -37,10 +41,11 @@ function createSearchPage() {
 
     app.innerHTML = `
         <section class="search-page">
+            <button class="search-page__back" type="button" data-back>← Back</button>
             <div class="search-page__hero">
                 <span class="section-heading__eyebrow">GLOBAL SEARCH</span>
                 <h1>Search results</h1>
-                <p>${query ? `Results for <strong>${query.replace(/</g, "&lt;")}</strong>` : "Search across teams, leagues and matches."}</p>
+                <p>${query ? `Results for <strong>${escapeHtml(query)}</strong>` : "Search across teams, leagues and matches."}</p>
             </div>
             <div class="search-page__section" data-search-section="teams">
                 <div class="search-page__heading"><h2>Teams</h2><span data-search-count="teams"></span></div>
@@ -56,6 +61,10 @@ function createSearchPage() {
             </div>
         </section>
     `;
+
+    app.querySelector("[data-back]").addEventListener("click", () => {
+        window.location.hash = "#home";
+    });
 
     if (!query) {
         app.querySelectorAll("[data-search-section]").forEach((section) => {
@@ -82,13 +91,7 @@ function createSearchPage() {
         const matchesTarget = app.querySelector("[data-search-matches]");
 
         if (teamsResult.status === "fulfilled") {
-            const teams = teamsResult.value.map(({ team, league }) => ({
-                id: team?.id,
-                name: team?.name ?? "Team",
-                country: team?.country ?? "International",
-                league: league?.name ?? "",
-                logo: team?.logo ?? ""
-            })).filter((team) => team.id);
+            const teams = teamsResult.value.map(({ team, league }) => ({ id: team?.id, name: team?.name ?? "Team", country: team?.country ?? "International", league: league?.name ?? "", logo: team?.logo ?? "" })).filter((team) => team.id);
             app.querySelector('[data-search-count="teams"]').textContent = `${teams.length} found`;
             teamsTarget.innerHTML = "";
             if (!teams.length) renderEmpty(teamsTarget, "No teams found", "Try another team name.");
@@ -104,9 +107,7 @@ function createSearchPage() {
         } else renderEmpty(leaguesTarget, "Could not search leagues", "Please check your API key and try again.");
 
         if (matchesResult.status === "fulfilled") {
-            const matches = matchesResult.value
-                .map(normalizeMatch)
-                .filter((match) => `${match.home.name} ${match.away.name} ${match.league}`.toLowerCase().includes(query.toLowerCase()));
+            const matches = matchesResult.value.map(normalizeMatch).filter((match) => `${match.home.name} ${match.away.name} ${match.league}`.toLowerCase().includes(query.toLowerCase()));
             app.querySelector('[data-search-count="matches"]').textContent = `${matches.length} found`;
             matchesTarget.innerHTML = "";
             if (!matches.length) renderEmpty(matchesTarget, "No matches found", "Try a team or league name that appears in a match.");
