@@ -1,8 +1,8 @@
 import {
-    getFixtureDetails,
     getFixtureEvents,
     getFixtureStatistics,
-    getFixtureLineups
+    getFixtureLineups,
+    getFixture
 } from "../api/matches";
 
 function getSelectedMatch() {
@@ -112,8 +112,8 @@ function createMatchPage() {
         const refresh = setInterval(async () => {
             if (!document.querySelector(".match-page")) return clearInterval(refresh);
             try {
-                const latest = await getFixtureDetails(match.fixtureId);
-                const fixture = latest?.fixture;
+                const data = await getFixture(match.fixtureId);
+                const fixture = data?.response?.[0]?.fixture ?? data?.fixture;
                 if (!fixture) return;
 
                 match.home.score = fixture.goals?.home;
