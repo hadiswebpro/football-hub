@@ -1,3 +1,4 @@
+import "./favicon";
 import "./styles/main.css";
 import "./styles/header.css";
 import "./styles/hero.css";
