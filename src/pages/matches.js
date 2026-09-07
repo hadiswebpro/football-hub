@@ -84,19 +84,15 @@ function createMatchesPage() {
 
     app.innerHTML = `
         <section class="matches-page">
-            <div class="matches-page__top">
-                <div class="matches-page__heading">
-                    <span class="section-heading__eyebrow">MATCH CENTER</span>
-                    <h1>Matches</h1>
-                    <p>Follow the matches happening yesterday, today and tomorrow.</p>
-                </div>
-                <div class="matches-page__controls">
-                    <input class="matches-page__search" type="search" placeholder="Search teams or leagues…" aria-label="Search matches" data-match-search>
-                    <div class="matches-page__date-controls" role="tablist" aria-label="Match dates">
-                        <button class="matches-page__date-button" type="button" data-date="yesterday" role="tab" aria-selected="false">Yesterday</button>
-                        <button class="matches-page__date-button is-active" type="button" data-date="today" role="tab" aria-selected="true">Today</button>
-                        <button class="matches-page__date-button" type="button" data-date="tomorrow" role="tab" aria-selected="false">Tomorrow</button>
-                    </div>
+            <div class="directory-page__top">
+                <div><span class="section-heading__eyebrow">MATCH CENTER</span><h1>Matches</h1><p>Follow the matches happening yesterday, today and tomorrow.</p></div>
+                <input class="directory-page__search" type="search" placeholder="Search teams or leagues…" aria-label="Search matches" data-match-search>
+            </div>
+            <div class="matches-page__date-row">
+                <div class="matches-page__date-controls" role="tablist" aria-label="Match dates">
+                    <button class="matches-page__date-button" type="button" data-date="yesterday" role="tab" aria-selected="false">Yesterday</button>
+                    <button class="matches-page__date-button is-active" type="button" data-date="today" role="tab" aria-selected="true">Today</button>
+                    <button class="matches-page__date-button" type="button" data-date="tomorrow" role="tab" aria-selected="false">Tomorrow</button>
                 </div>
             </div>
             <div class="matches-page__summary"><span class="matches-page__result-label">TODAY</span><strong data-count>Loading…</strong></div>
