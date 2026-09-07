@@ -85,7 +85,11 @@ function createMatchesPage() {
     app.innerHTML = `
         <section class="matches-page">
             <div class="matches-page__top">
-                <div><span class="section-heading__eyebrow">MATCH CENTER</span><h1>Matches</h1><p>Follow the matches happening yesterday, today and tomorrow.</p></div>
+                <div class="matches-page__heading">
+                    <span class="section-heading__eyebrow">MATCH CENTER</span>
+                    <h1>Matches</h1>
+                    <p>Follow the matches happening yesterday, today and tomorrow.</p>
+                </div>
                 <div class="matches-page__controls">
                     <input class="matches-page__search" type="search" placeholder="Search teams or leagues…" aria-label="Search matches" data-match-search>
                     <div class="matches-page__date-controls" role="tablist" aria-label="Match dates">
