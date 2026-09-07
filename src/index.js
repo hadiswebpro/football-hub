@@ -4,6 +4,7 @@ import "./styles/hero.css";
 import "./styles/cards.css";
 import "./styles/match-page.css";
 import "./styles/league-page.css";
+import "./styles/league-teams.css";
 import "./styles/responsive.css";
 
 import createHeader from "./components/header";
