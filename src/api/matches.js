@@ -20,26 +20,35 @@ async function getLiveMatches() {
 }
 
 async function getFixtureDetails(fixtureId) {
-    const encodedId = encodeURIComponent(fixtureId);
+    const data = await request(`?id=${encodeURIComponent(fixtureId)}`);
+    return data.response?.[0] ?? null;
+}
 
-    const [fixture, events, statistics, lineups] = await Promise.all([
-        request(`?id=${encodedId}`),
-        request(`?id=${encodedId}&events=true`),
-        request(`?id=${encodedId}&statistics=true`),
-        request(`?id=${encodedId}&lineups=true`)
-    ]);
+async function getFixtureEvents(fixtureId) {
+    const data = await request(`?id=${encodeURIComponent(fixtureId)}&events=true`);
+    return data.response ?? [];
+}
 
-    return {
-        fixture: fixture.response?.[0] ?? null,
-        events: events.response ?? [],
-        statistics: statistics.response?.[0] ?? null,
-        lineups: lineups.response ?? []
-    };
+async function getFixtureStatistics(fixtureId) {
+    const data = await request(`?id=${encodeURIComponent(fixtureId)}&statistics=true`);
+    return data.response?.[0] ?? null;
+}
+
+async function getFixtureLineups(fixtureId) {
+    const data = await request(`?id=${encodeURIComponent(fixtureId)}&lineups=true`);
+    return data.response ?? [];
 }
 
 async function getMatches() {
     return request();
 }
 
-export { getLiveMatches, getFixtureDetails };
+export {
+    getLiveMatches,
+    getFixtureDetails,
+    getFixtureEvents,
+    getFixtureStatistics,
+    getFixtureLineups
+};
+
 export default getMatches;
