@@ -79,8 +79,7 @@ function createMatchPage() {
 
     app.querySelector(".match-page__back").addEventListener("click", () => {
         sessionStorage.removeItem("football-hub-selected-match");
-        window.location.hash = "";
-        window.location.reload();
+        window.location.hash = "#matches";
     });
 
     const loaded = new Set();
