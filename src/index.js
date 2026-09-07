@@ -8,6 +8,7 @@ import "./styles/league-page.css";
 import "./styles/league-teams.css";
 import "./styles/team-page.css";
 import "./styles/directory-page.css";
+import "./styles/home-sections.css";
 import "./styles/responsive.css";
 
 import createHeader from "./components/header";
