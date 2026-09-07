@@ -1,37 +1,44 @@
 import getCompetitions from "../api/competitions";
+import { getLiveMatches, getMatchesByDate } from "../api/matches";
 import createHero from "../components/hero";
 import createMatchCard from "../components/matchcard";
 import createLeagueCard from "../components/leagueCard";
 
 const importantLeagueIds = [1, 4, 2, 3, 39, 40, 140, 141, 135, 136, 78, 79, 61, 62];
 
-const demoMatches = [
-    {
-        fixtureId: 215662,
-        league: "Premier League",
-        status: "LIVE",
-        minute: "67'",
-        time: "Live now",
-        home: { name: "Arsenal", score: 2, logo: "https://media.api-sports.io/football/teams/42.png" },
-        away: { name: "Chelsea", score: 1, logo: "https://media.api-sports.io/football/teams/49.png" },
-    },
-    {
-        fixtureId: 215663,
-        league: "La Liga",
-        status: "SCHEDULED",
-        time: "20:00",
-        home: { name: "Real Madrid", score: null, logo: "https://media.api-sports.io/football/teams/541.png" },
-        away: { name: "Barcelona", score: null, logo: "https://media.api-sports.io/football/teams/529.png" },
-    },
-    {
-        fixtureId: 215664,
-        league: "Premier League",
-        status: "SCHEDULED",
-        time: "22:30",
-        home: { name: "Liverpool", score: null, logo: "https://media.api-sports.io/football/teams/40.png" },
-        away: { name: "Manchester City", score: null, logo: "https://media.api-sports.io/football/teams/50.png" },
-    },
-];
+function getDate(offset = 0) {
+    const date = new Date();
+    date.setDate(date.getDate() + offset);
+    return date.toISOString().slice(0, 10);
+}
+
+function normalizeFixture(fixture) {
+    const status = fixture.fixture?.status?.short;
+    const liveStatuses = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE"];
+    const finishedStatuses = ["FT", "AET", "PEN"];
+    const isLive = liveStatuses.includes(status);
+    const isFinished = finishedStatuses.includes(status);
+
+    return {
+        fixtureId: fixture.fixture?.id,
+        league: fixture.league?.name ?? "Football",
+        status: isLive ? "LIVE" : isFinished ? "FINISHED" : "SCHEDULED",
+        minute: fixture.fixture?.status?.elapsed ? `${fixture.fixture.status.elapsed}'` : "",
+        time: isLive
+            ? "Live now"
+            : new Date(fixture.fixture?.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        home: {
+            name: fixture.teams?.home?.name ?? "Home",
+            score: fixture.goals?.home ?? null,
+            logo: fixture.teams?.home?.logo ?? ""
+        },
+        away: {
+            name: fixture.teams?.away?.name ?? "Away",
+            score: fixture.goals?.away ?? null,
+            logo: fixture.teams?.away?.logo ?? ""
+        }
+    };
+}
 
 function renderHomeSections() {
     const app = document.querySelector("#app");
@@ -72,11 +79,25 @@ function setupMatchViewControls(liveContainer, upcomingContainer) {
     });
 }
 
-function renderDemoMatches(containers) {
-    demoMatches.forEach((match) => {
-        const target = match.status === "LIVE" ? containers.live : containers.upcoming;
-        target.appendChild(createMatchCard(match));
-    });
+function renderMatches(containers, liveFixtures, upcomingFixtures) {
+    const liveMatches = liveFixtures.map(normalizeFixture);
+    const upcomingMatches = upcomingFixtures
+        .map(normalizeFixture)
+        .filter((match) => match.status === "SCHEDULED")
+        .slice(0, 12);
+
+    if (!liveMatches.length) {
+        containers.live.innerHTML = `<div class="matches__empty">No live matches right now.</div>`;
+    } else {
+        liveMatches.forEach((match) => containers.live.appendChild(createMatchCard(match)));
+    }
+
+    if (!upcomingMatches.length) {
+        containers.upcoming.innerHTML = `<div class="matches__empty">No upcoming matches found.</div>`;
+    } else {
+        upcomingMatches.forEach((match) => containers.upcoming.appendChild(createMatchCard(match)));
+    }
+
     setupMatchViewControls(containers.live, containers.upcoming);
 }
 
@@ -84,14 +105,35 @@ async function loadCompetitions() {
     const containers = renderHomeSections();
     if (!containers) return;
 
-    renderDemoMatches(containers);
+    containers.live.innerHTML = `<div class="matches__empty">Loading live matches…</div>`;
+    containers.upcoming.innerHTML = `<div class="matches__empty">Loading upcoming matches…</div>`;
 
-    const data = await getCompetitions();
-    if (!data?.response) return;
+    try {
+        const [liveData, todayData, tomorrowData] = await Promise.all([
+            getLiveMatches(),
+            getMatchesByDate(getDate()),
+            getMatchesByDate(getDate(1))
+        ]);
 
-    data.response
-        .filter((competition) => importantLeagueIds.includes(competition.league.id))
-        .forEach((competition) => containers.leagues.appendChild(createLeagueCard(competition)));
+        const today = todayData.response ?? [];
+        const tomorrow = tomorrowData.response ?? [];
+        renderMatches(containers, liveData.response ?? [], [...today, ...tomorrow]);
+    } catch (error) {
+        containers.live.innerHTML = `<div class="matches__empty">Could not load live matches. Check your API key.</div>`;
+        containers.upcoming.innerHTML = `<div class="matches__empty">Could not load upcoming matches. Check your API key.</div>`;
+        setupMatchViewControls(containers.live, containers.upcoming);
+    }
+
+    try {
+        const data = await getCompetitions();
+        if (!data?.response) return;
+
+        data.response
+            .filter((competition) => importantLeagueIds.includes(competition.league.id))
+            .forEach((competition) => containers.leagues.appendChild(createLeagueCard(competition)));
+    } catch {
+        containers.leagues.innerHTML = `<div class="matches__empty">Could not load leagues.</div>`;
+    }
 }
 
 export default loadCompetitions;
