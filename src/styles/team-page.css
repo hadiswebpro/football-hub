@@ -1,0 +1,31 @@
+.team-page { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 34px 0 70px; }
+.team-page__back { border: 0; background: transparent; color: #718078; cursor: pointer; font: inherit; font-size: 12px; transition: color .2s ease; }
+.team-page__back:hover { color: #39ff88; }
+.team-page__hero { display: flex; justify-content: space-between; align-items: center; gap: 24px; margin: 18px 0; padding: 28px; border: 1px solid rgba(57,255,136,.14); border-radius: 24px; background: linear-gradient(145deg, rgba(15,30,21,.96), rgba(5,12,8,.98)); box-shadow: 0 18px 45px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.04); }
+.team-page__identity { display: flex; align-items: center; gap: 18px; min-width: 0; }
+.team-page__logo { width: 104px; height: 104px; flex: 0 0 104px; display: grid; place-items: center; border: 1px solid rgba(57,255,136,.25); border-radius: 50%; background: rgba(255,255,255,.035); box-shadow: 0 0 30px rgba(57,255,136,.1); }
+.team-page__logo img { width: 70px; height: 70px; object-fit: contain; }
+.team-page__identity > div:last-child > span, .team-page__heading > span { color: #39ff88; font-size: 9px; font-weight: 900; letter-spacing: .16em; }
+.team-page__identity h1 { margin: 5px 0 7px; color: #f8fafc; font-size: clamp(30px, 5vw, 48px); line-height: 1; }
+.team-page__identity p { margin: 0; color: #748079; font-size: 12px; }
+.team-page__favorite { padding: 11px 16px; border: 1px solid rgba(57,255,136,.2); border-radius: 10px; background: rgba(8,17,12,.7); color: #a8b3ad; cursor: pointer; font: inherit; font-size: 11px; font-weight: 800; transition: .25s ease; }
+.team-page__favorite:hover { color: #39ff88; border-color: rgba(57,255,136,.45); box-shadow: 0 0 18px rgba(57,255,136,.1); }
+.team-page__favorite.is-favorite { color: #cfc018; border-color: rgba(207,192,24,.35); box-shadow: 0 0 18px rgba(207,192,24,.08); }
+.team-page__stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 30px; }
+.team-page__stats > div { padding: 17px 18px; border: 1px solid rgba(57,255,136,.1); border-radius: 15px; background: rgba(8,17,12,.72); }
+.team-page__stats span { display: block; margin-bottom: 6px; color: #5e6d64; font-size: 9px; font-weight: 800; letter-spacing: .12em; }
+.team-page__stats strong { color: #f1f5f3; font-size: 13px; }
+.team-page__section { padding-top: 4px; }
+.team-page__heading { margin-bottom: 18px; }
+.team-page__heading h2 { margin: 5px 0 6px; color: #f8fafc; font-size: 25px; }
+.team-page__heading p { margin: 0; color: #718078; font-size: 12px; }
+.team-page__tabs { display: flex; gap: 6px; width: fit-content; margin-bottom: 14px; padding: 4px; border: 1px solid rgba(57,255,136,.12); border-radius: 12px; background: rgba(7,16,11,.8); }
+.team-page__tabs button { padding: 9px 13px; border: 0; border-radius: 8px; background: transparent; color: #718078; cursor: pointer; font: inherit; font-size: 10px; font-weight: 800; }
+.team-page__tabs button.is-active { color: #07100b; background: #39ff88; }
+.team-page__matches { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.team-page__empty { display: grid; place-items: center; min-height: 220px; padding: 30px; border: 1px solid rgba(57,255,136,.1); border-radius: 18px; background: rgba(8,17,12,.7); color: #718078; text-align: center; }
+.team-page__empty h2 { color: #f8fafc; }
+.team-page__empty button { margin-top: 12px; padding: 9px 14px; border: 1px solid rgba(57,255,136,.2); border-radius: 9px; background: transparent; color: #39ff88; cursor: pointer; }
+@media (max-width: 1000px) { .team-page__matches { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 700px) { .team-page { width: min(100% - 20px, 1180px); padding-top: 22px; } .team-page__hero { align-items: flex-start; flex-direction: column; padding: 20px; } .team-page__logo { width: 82px; height: 82px; flex-basis: 82px; } .team-page__logo img { width: 55px; height: 55px; } .team-page__stats { grid-template-columns: 1fr; } .team-page__matches { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 430px) { .team-page__identity { align-items: flex-start; } .team-page__matches { grid-template-columns: 1fr; } .team-page__tabs { width: 100%; } .team-page__tabs button { flex: 1; } }
