@@ -1,4 +1,4 @@
-import { getLiveMatches, getMatchesByDate } from "../api/matches";
+import { getMatchesByDate } from "../api/matches";
 import createMatchCard from "../components/matchcard";
 
 function getDate(offset = 0) {
@@ -22,50 +22,26 @@ function normalizeFixture(fixture) {
         country: fixture.league?.country ?? "International",
         status: isLive ? "LIVE" : isFinished ? "FINISHED" : "SCHEDULED",
         minute: fixture.fixture?.status?.elapsed ? `${fixture.fixture.status.elapsed}'` : "",
-        time: isLive
-            ? "Live now"
-            : new Date(fixture.fixture?.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        time: isLive ? "Live now" : new Date(fixture.fixture?.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         date: fixture.fixture?.date ?? "",
-        home: {
-            name: fixture.teams?.home?.name ?? "Home",
-            score: fixture.goals?.home ?? null,
-            logo: fixture.teams?.home?.logo ?? ""
-        },
-        away: {
-            name: fixture.teams?.away?.name ?? "Away",
-            score: fixture.goals?.away ?? null,
-            logo: fixture.teams?.away?.logo ?? ""
-        }
+        home: { name: fixture.teams?.home?.name ?? "Home", score: fixture.goals?.home ?? null, logo: fixture.teams?.home?.logo ?? "" },
+        away: { name: fixture.teams?.away?.name ?? "Away", score: fixture.goals?.away ?? null, logo: fixture.teams?.away?.logo ?? "" }
     };
 }
 
 function groupByLeague(fixtures) {
     const groups = new Map();
-
-    fixtures
-        .map(normalizeFixture)
-        .sort((a, b) => new Date(a.date) - new Date(b.date))
-        .forEach((match) => {
-            const key = match.leagueId ?? match.league;
-            if (!groups.has(key)) {
-                groups.set(key, {
-                    id: key,
-                    name: match.league,
-                    logo: match.leagueLogo,
-                    country: match.country,
-                    matches: []
-                });
-            }
-            groups.get(key).matches.push(match);
-        });
-
+    fixtures.map(normalizeFixture).sort((a, b) => new Date(a.date) - new Date(b.date)).forEach((match) => {
+        const key = match.leagueId ?? match.league;
+        if (!groups.has(key)) groups.set(key, { id: key, name: match.league, logo: match.leagueLogo, country: match.country, matches: [] });
+        groups.get(key).matches.push(match);
+    });
     return [...groups.values()];
 }
 
-function renderLeagueGroups(container, fixtures, title) {
+function renderLeagueGroups(container, fixtures) {
     container.innerHTML = "";
     const groups = groupByLeague(fixtures);
-
     if (!groups.length) {
         container.innerHTML = `<div class="matches-page__empty"><span>NO MATCHES</span><h2>No matches found</h2><p>There are no fixtures available for this date.</p></div>`;
         return;
@@ -78,23 +54,16 @@ function renderLeagueGroups(container, fixtures, title) {
             <div class="matches-page__league-heading">
                 <div class="matches-page__league-title">
                     <div class="matches-page__league-logo">${league.logo ? `<img src="${league.logo}" alt="${league.name} logo">` : "⚽"}</div>
-                    <div>
-                        <span>${league.country}</span>
-                        <h2>${league.name}</h2>
-                    </div>
+                    <div><span>${league.country}</span><h2>${league.name}</h2></div>
                 </div>
                 <span class="matches-page__league-count">${league.matches.length} match${league.matches.length === 1 ? "" : "es"}</span>
             </div>
             <div class="matches-page__league-scroll" tabindex="0" aria-label="${league.name} matches"></div>
         `;
-
         const scroll = section.querySelector(".matches-page__league-scroll");
         league.matches.forEach((match) => scroll.appendChild(createMatchCard(match)));
         container.appendChild(section);
     });
-
-    const heading = container.querySelector(".matches-page__result-label");
-    if (heading) heading.textContent = title;
 }
 
 function createMatchesPage() {
@@ -104,12 +73,9 @@ function createMatchesPage() {
     app.innerHTML = `
         <section class="matches-page">
             <div class="matches-page__top">
-                <div>
-                    <span class="section-heading__eyebrow">MATCH CENTER</span>
-                    <h1>Matches</h1>
-                    <p>Every league. Every fixture. All in one place.</p>
-                </div>
+                <div><span class="section-heading__eyebrow">MATCH CENTER</span><h1>Matches</h1><p>Follow the matches happening yesterday, today and tomorrow.</p></div>
                 <div class="matches-page__date-controls" role="tablist" aria-label="Match dates">
+                    <button class="matches-page__date-button" type="button" data-date="yesterday" role="tab" aria-selected="false">Yesterday</button>
                     <button class="matches-page__date-button is-active" type="button" data-date="today" role="tab" aria-selected="true">Today</button>
                     <button class="matches-page__date-button" type="button" data-date="tomorrow" role="tab" aria-selected="false">Tomorrow</button>
                 </div>
@@ -125,36 +91,24 @@ function createMatchesPage() {
     const count = app.querySelector("[data-count]");
     const resultLabel = app.querySelector(".matches-page__result-label");
     const cache = new Map();
+    const labels = { yesterday: "YESTERDAY", today: "TODAY", tomorrow: "TOMORROW" };
+    const offsets = { yesterday: -1, today: 0, tomorrow: 1 };
 
     const loadDate = async (dateKey) => {
         if (cache.has(dateKey)) {
             const fixtures = cache.get(dateKey);
-            loading.hidden = true;
-            groups.hidden = false;
-            resultLabel.textContent = dateKey === "today" ? "TODAY" : "TOMORROW";
+            loading.hidden = true; groups.hidden = false; resultLabel.textContent = labels[dateKey];
             count.textContent = `${fixtures.length} match${fixtures.length === 1 ? "" : "es"}`;
-            renderLeagueGroups(groups, fixtures, resultLabel.textContent);
-            return;
+            renderLeagueGroups(groups, fixtures); return;
         }
-
-        loading.hidden = false;
-        groups.hidden = true;
-        loading.textContent = `Loading ${dateKey === "today" ? "today's" : "tomorrow's"} matches…`;
-
+        loading.hidden = false; groups.hidden = true; loading.textContent = `Loading ${dateKey === "today" ? "today's" : dateKey === "yesterday" ? "yesterday's" : "tomorrow's"} matches…`;
         try {
-            const fixtures = dateKey === "today"
-                ? (await getMatchesByDate(getDate())).response ?? []
-                : (await getMatchesByDate(getDate(1))).response ?? [];
-
-            cache.set(dateKey, fixtures);
-            loading.hidden = true;
-            groups.hidden = false;
-            resultLabel.textContent = dateKey === "today" ? "TODAY" : "TOMORROW";
-            count.textContent = `${fixtures.length} match${fixtures.length === 1 ? "" : "es"}`;
-            renderLeagueGroups(groups, fixtures, resultLabel.textContent);
+            const fixtures = (await getMatchesByDate(getDate(offsets[dateKey]))).response ?? [];
+            cache.set(dateKey, fixtures); loading.hidden = true; groups.hidden = false;
+            resultLabel.textContent = labels[dateKey]; count.textContent = `${fixtures.length} match${fixtures.length === 1 ? "" : "es"}`;
+            renderLeagueGroups(groups, fixtures);
         } catch {
-            loading.hidden = false;
-            groups.hidden = true;
+            loading.hidden = false; groups.hidden = true;
             loading.innerHTML = `<div class="matches-page__empty"><span>API ERROR</span><h2>Could not load matches</h2><p>Please check your API key and try again.</p></div>`;
         }
     };
@@ -163,13 +117,11 @@ function createMatchesPage() {
         button.addEventListener("click", () => {
             app.querySelectorAll("[data-date]").forEach((item) => {
                 const active = item === button;
-                item.classList.toggle("is-active", active);
-                item.setAttribute("aria-selected", String(active));
+                item.classList.toggle("is-active", active); item.setAttribute("aria-selected", String(active));
             });
             loadDate(button.dataset.date);
         });
     });
-
     loadDate("today");
 }
 
