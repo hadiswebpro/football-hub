@@ -86,6 +86,14 @@ button { cursor: pointer; }
     gap: 22px;
 }
 
+/* Keep every home section heading centered, including headings with extra controls. */
+.home-section > .section-heading,
+.home-section .section-heading {
+    width: 100%;
+    align-items: center;
+    text-align: center;
+}
+
 @media (max-width: 1050px) {
     #app { width: min(960px, calc(100% - 32px)); }
     .leagues { grid-template-columns: repeat(3, minmax(0, 1fr)); }
