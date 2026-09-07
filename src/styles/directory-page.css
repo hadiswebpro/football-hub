@@ -1,7 +1,7 @@
 .directory-page { width:min(1180px,calc(100% - 32px)); margin:0 auto; padding:34px 0 70px; }
 .directory-page__top { display:flex; justify-content:space-between; align-items:end; gap:24px; margin-bottom:30px; }
-.directory-page__top h1 { margin:5px 0 8px; color:#f8fafc; font-size:clamp(34px,5vw,52px); line-height:1; }
-.directory-page__top p { color:#8b9991; font-size:13px; }
+.directory-page__top h1 { margin:5px 0 8px; color:#121715; font-size:clamp(34px,5vw,52px); line-height:1; }
+.directory-page__top p { color:#4f5b54; font-size:13px; }
 .directory-page__search { width:250px; padding:12px 15px; border:1px solid rgba(57,255,136,.18); border-radius:12px; outline:none; background:rgba(7,16,11,.9); color:#fff; }
 .directory-page__search::placeholder { color:#7d8b84; }
 .directory-page__search:focus { border-color:rgba(57,255,136,.55); box-shadow:0 0 20px rgba(57,255,136,.08); }
