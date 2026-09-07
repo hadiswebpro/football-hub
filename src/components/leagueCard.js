@@ -1,6 +1,7 @@
 import {formatDate, getLeagueStatus} from "../utils/date";
 
 const FAVORITES_KEY = "football-hub-favorite-leagues";
+const SELECTED_LEAGUE_KEY = "football-hub-selected-league";
 
 function getFavoriteLeagues() {
     try {
@@ -51,18 +52,13 @@ function createLeagueCard(competition) {
 
         <div class="league-card__logo-wrap">
             <div class="league-card__ring"></div>
-            <img
-                src="${competition.league.logo}"
-                alt="${competition.league.name} logo"
-                class="league-logo"
-            >
+            <img src="${competition.league.logo}" alt="${competition.league.name} logo" class="league-logo">
         </div>
 
         <div class="league-info">
             <h3>${competition.league.name}</h3>
             <p class="league-card__country">${competition.country.name}</p>
             <span class="league-card__type">${competition.league.type}</span>
-
             ${currentSeason ? `
                 <div class="league-card__dates">
                     <span>${formatDate(currentSeason.start)}</span>
@@ -82,18 +78,13 @@ function createLeagueCard(competition) {
 
     favoriteButton.addEventListener("click", (event) => {
         event.stopPropagation();
-
         const ids = getFavoriteLeagues();
         const index = ids.indexOf(competition.league.id);
 
-        if (index === -1) {
-            ids.push(competition.league.id);
-        } else {
-            ids.splice(index, 1);
-        }
+        if (index === -1) ids.push(competition.league.id);
+        else ids.splice(index, 1);
 
         saveFavoriteLeagues(ids);
-
         const active = ids.includes(competition.league.id);
         favoriteButton.classList.toggle("is-favorite", active);
         favoriteButton.setAttribute("aria-pressed", String(active));
@@ -105,12 +96,8 @@ function createLeagueCard(competition) {
 
     const openCard = () => {
         card.classList.add("is-open");
-        card.dispatchEvent(
-            new CustomEvent("league:open", {
-                bubbles: true,
-                detail: competition,
-            }),
-        );
+        sessionStorage.setItem(SELECTED_LEAGUE_KEY, JSON.stringify(competition));
+        window.location.hash = "league";
     };
 
     card.addEventListener("click", openCard);
