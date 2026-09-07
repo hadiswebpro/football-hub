@@ -7,6 +7,7 @@ import "./styles/matches-page.css";
 import "./styles/league-page.css";
 import "./styles/league-teams.css";
 import "./styles/team-page.css";
+import "./styles/directory-page.css";
 import "./styles/responsive.css";
 
 import createHeader from "./components/header";
@@ -15,14 +16,19 @@ import createMatchPage from "./pages/match";
 import createMatchesPage from "./pages/matches";
 import createLeaguePage from "./pages/league";
 import createTeamPage from "./pages/team";
+import createTeamsPage from "./pages/teams";
+import createLeaguesPage from "./pages/leagues";
 
 createHeader();
 
 function renderRoute() {
-    if (window.location.hash === "#match") { createMatchPage(); return; }
-    if (window.location.hash === "#matches") { createMatchesPage(); return; }
-    if (window.location.hash === "#league") { createLeaguePage(); return; }
-    if (window.location.hash === "#team") { createTeamPage(); return; }
+    const hash = window.location.hash;
+    if (hash === "#match") { createMatchPage(); return; }
+    if (hash === "#matches") { createMatchesPage(); return; }
+    if (hash === "#league") { createLeaguePage(); return; }
+    if (hash === "#team") { createTeamPage(); return; }
+    if (hash === "#teams") { createTeamsPage(); return; }
+    if (hash === "#leagues") { createLeaguesPage(); return; }
     loadCompetitions();
 }
 
