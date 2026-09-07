@@ -1,16 +1,12 @@
-const API_URL = "https://v3.football.api-sports.io/leagues";
-const API_KEY = "";
+import { request, TTL } from "./client";
 
 async function getCompetitions() {
-    const response = await fetch(API_URL, {
-        headers: {
-            "x-apisports-key": API_KEY
-        }
-    });
-
-    const data = await response.json();
-
-    return data;
+    return request("/leagues", TTL.reference);
 }
 
+async function searchLeagues(query) {
+    return request(`/leagues?search=${encodeURIComponent(query)}`, TTL.reference);
+}
+
+export { searchLeagues };
 export default getCompetitions;
