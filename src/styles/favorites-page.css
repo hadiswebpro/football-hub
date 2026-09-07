@@ -1,0 +1,19 @@
+.favorites-page { width:min(1180px,calc(100% - 32px)); margin:0 auto; padding:40px 0 80px; }
+.favorites-page__heading { text-align:center; margin-bottom:42px; }
+.favorites-page__heading h1 { margin:6px 0 8px; color:#f8fafc; font-size:clamp(38px,6vw,58px); line-height:1; }
+.favorites-page__heading p { color:#8b9991; font-size:13px; }
+.favorites-page__section { margin-top:34px; }
+.favorites-page__section-head { display:flex; justify-content:space-between; align-items:end; margin-bottom:18px; padding-bottom:12px; border-bottom:1px solid rgba(57,255,136,.12); }
+.favorites-page__section-head span { color:#39ff88; font-size:10px; letter-spacing:.16em; font-weight:800; }
+.favorites-page__section-head h2 { margin:5px 0 0; color:#f8fafc; font-size:24px; }
+.favorites-page__section-head strong { min-width:34px; height:30px; display:grid; place-items:center; border:1px solid rgba(57,255,136,.25); border-radius:9px; background:rgba(57,255,136,.06); color:#39ff88; font-size:13px; }
+.favorites-page__grid { display:grid; gap:20px; }
+.favorites-page__grid--teams { grid-template-columns:repeat(4,minmax(0,1fr)); }
+.favorites-page__grid--leagues { grid-template-columns:repeat(4,minmax(0,1fr)); }
+.favorites-page__empty,.favorites-page__loading { grid-column:1/-1; min-height:180px; display:grid; place-items:center; align-content:center; gap:7px; padding:30px; border:1px solid rgba(57,255,136,.14); border-radius:20px; background:rgba(8,17,12,.9); text-align:center; }
+.favorites-page__empty span { color:#cfc018; font-size:28px; }
+.favorites-page__empty h3 { color:#f8fafc; font-size:18px; }
+.favorites-page__empty p,.favorites-page__loading { color:#8b9991; font-size:12px; }
+@media(max-width:1050px){.favorites-page__grid--teams,.favorites-page__grid--leagues{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){.favorites-page{padding-top:28px}.favorites-page__grid--teams,.favorites-page__grid--leagues{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.favorites-page__section-head h2{font-size:20px}}
+@media(max-width:430px){.favorites-page{width:calc(100% - 20px)}.favorites-page__grid--teams,.favorites-page__grid--leagues{grid-template-columns:1fr}}
