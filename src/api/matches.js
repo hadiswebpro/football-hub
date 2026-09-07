@@ -1,54 +1,74 @@
-const API_URL = "https://v3.football.api-sports.io/fixtures";
+const API_BASE = "https://v3.football.api-sports.io";
 const API_KEY = "";
 
-async function request(params = "") {
-    const response = await fetch(`${API_URL}${params}`, {
+async function request(path) {
+    const response = await fetch(`${API_BASE}${path}`, {
         headers: {
             "x-apisports-key": API_KEY
         }
     });
 
     if (!response.ok) {
-        throw new Error(`Fixtures request failed: ${response.status}`);
+        throw new Error(`Football API request failed: ${response.status}`);
     }
 
-    return response.json();
+    const data = await response.json();
+
+    if (data.errors && Object.keys(data.errors).length > 0) {
+        throw new Error("Football API returned an error.");
+    }
+
+    return data;
 }
 
 async function getLiveMatches() {
-    return request("?live=all");
+    return request("/fixtures?live=all");
 }
 
-async function getFixtureDetails(fixtureId) {
-    const data = await request(`?id=${encodeURIComponent(fixtureId)}`);
-    return data.response?.[0] ?? null;
+async function getMatchesByDate(date) {
+    return request(`/fixtures?date=${encodeURIComponent(date)}`);
+}
+
+async function getFixture(fixtureId) {
+    return request(`/fixtures?id=${encodeURIComponent(fixtureId)}`);
 }
 
 async function getFixtureEvents(fixtureId) {
-    const data = await request(`?id=${encodeURIComponent(fixtureId)}&events=true`);
-    return data.response ?? [];
+    return request(`/fixtures/events?fixture=${encodeURIComponent(fixtureId)}`);
 }
 
 async function getFixtureStatistics(fixtureId) {
-    const data = await request(`?id=${encodeURIComponent(fixtureId)}&statistics=true`);
-    return data.response?.[0] ?? null;
+    return request(`/fixtures/statistics?fixture=${encodeURIComponent(fixtureId)}`);
 }
 
 async function getFixtureLineups(fixtureId) {
-    const data = await request(`?id=${encodeURIComponent(fixtureId)}&lineups=true`);
-    return data.response ?? [];
+    return request(`/fixtures/lineups?fixture=${encodeURIComponent(fixtureId)}`);
 }
 
-async function getMatches() {
-    return request();
+async function getFixtureDetails(fixtureId) {
+    const [fixture, events, statistics, lineups] = await Promise.all([
+        getFixture(fixtureId),
+        getFixtureEvents(fixtureId),
+        getFixtureStatistics(fixtureId),
+        getFixtureLineups(fixtureId)
+    ]);
+
+    return {
+        fixture: fixture.response?.[0] ?? null,
+        events: events.response ?? [],
+        statistics: statistics.response ?? [],
+        lineups: lineups.response ?? []
+    };
 }
 
 export {
     getLiveMatches,
-    getFixtureDetails,
+    getMatchesByDate,
+    getFixture,
     getFixtureEvents,
     getFixtureStatistics,
-    getFixtureLineups
+    getFixtureLineups,
+    getFixtureDetails
 };
 
-export default getMatches;
+export default getMatchesByDate;
