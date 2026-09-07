@@ -1,73 +1,19 @@
-.search-page {
-    width: min(1180px, calc(100% - 32px));
-    margin: 0 auto;
-    padding: 42px 0 70px;
-}
-
-.search-page__hero {
-    margin-bottom: 34px;
-    padding: 28px;
-    border: 1px solid rgba(57, 255, 136, 0.18);
-    border-radius: 22px;
-    background: linear-gradient(145deg, rgba(15, 24, 19, 0.96), rgba(7, 13, 10, 0.96));
-    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.25), 0 0 28px rgba(57, 255, 136, 0.05);
-}
-
-.search-page__hero h1 {
-    margin: 8px 0 8px;
-    color: #fff;
-    font-size: clamp(30px, 5vw, 46px);
-}
-
-.search-page__hero p { color: #8e9b94; margin: 0; }
-.search-page__hero strong { color: #39ff88; }
-
+.search-page { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 34px 0 70px; }
+.search-page__back { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 18px; padding: 8px 0; border: 0; background: transparent; color: #65726b; cursor: pointer; font: inherit; font-size: 12px; font-weight: 800; transition: color .2s ease, transform .2s ease; }
+.search-page__back:hover { color: #39ff88; transform: translateX(-3px); }
+.search-page__hero { margin-bottom: 34px; padding: 28px; border: 1px solid rgba(57,255,136,.18); border-radius: 22px; background: linear-gradient(145deg, rgba(15,24,19,.96), rgba(7,13,10,.96)); box-shadow: 0 18px 45px rgba(0,0,0,.25), 0 0 28px rgba(57,255,136,.05); }
+.search-page__hero h1 { margin: 8px 0; color: #fff; font-size: clamp(30px, 5vw, 46px); }
+.search-page__hero p { color: #161b18; margin: 0; }
+.search-page__hero strong { color: #167a45; }
 .search-page__section { margin-top: 34px; }
-
-.search-page__heading {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 16px;
-}
-
-.search-page__heading h2 { margin: 0; color: #fff; font-size: 22px; }
-.search-page__heading span { color: #39ff88; font-size: 12px; }
-
+.search-page__heading { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+.search-page__heading h2 { margin: 0; color: #121715; font-size: 22px; }
+.search-page__heading span { color: #168044; font-size: 12px; font-weight: 800; }
 .search-page__grid { min-height: 90px; }
-.search-page__match-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 18px;
-    min-height: 90px;
-}
-
-.search-page__loading,
-.search-page__empty {
-    grid-column: 1 / -1;
-    padding: 28px;
-    border: 1px solid rgba(57, 255, 136, 0.12);
-    border-radius: 16px;
-    background: rgba(10, 17, 13, 0.78);
-    color: #84918a;
-    text-align: center;
-}
-
-.search-page__empty h3 { margin: 0 0 7px; color: #fff; }
-.search-page__empty p { margin: 0; }
-
-@media (max-width: 1000px) {
-    .search-page__match-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-}
-
-@media (max-width: 700px) {
-    .search-page { width: min(100% - 20px, 1180px); padding-top: 26px; }
-    .search-page__hero { padding: 22px; border-radius: 18px; }
-    .search-page__match-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-}
-
-@media (max-width: 480px) {
-    .search-page__match-grid { grid-template-columns: 1fr; }
-    .search-page__heading h2 { font-size: 19px; }
-}
+.search-page__match-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; min-height: 90px; }
+.search-page__loading, .search-page__empty { grid-column: 1 / -1; padding: 28px; border: 1px solid rgba(57,255,136,.12); border-radius: 16px; background: rgba(10,17,13,.78); color: #303a34; text-align: center; }
+.search-page__empty h3 { margin: 0 0 7px; color: #111613; }
+.search-page__empty p { margin: 0; color: #303a34; }
+@media (max-width: 1000px) { .search-page__match-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 700px) { .search-page { width: min(100% - 20px, 1180px); padding-top: 22px; } .search-page__hero { padding: 22px; border-radius: 18px; } .search-page__match-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; } }
+@media (max-width: 480px) { .search-page__match-grid { grid-template-columns: 1fr; } .search-page__heading h2 { font-size: 19px; } }
