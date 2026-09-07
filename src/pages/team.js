@@ -8,7 +8,15 @@ const FAVORITES_KEY = "football-hub-favorite-teams";
 
 function getSelectedTeam() { try { return JSON.parse(sessionStorage.getItem(SELECTED_TEAM_KEY)); } catch { return null; } }
 function getFavorites() { try { return JSON.parse(localStorage.getItem(FAVORITES_KEY)) || []; } catch { return []; } }
-function toggleFavorite(id) { const ids = getFavorites(); const index = ids.indexOf(id); if (index === -1) ids.push(id); else ids.splice(index, 1); localStorage.setItem(FAVORITES_KEY, JSON.stringify(ids)); return ids.includes(id); }
+function toggleFavorite(team) {
+    const favorites = getFavorites();
+    const id = Number(team.id);
+    const index = favorites.findIndex((item) => Number(item?.id ?? item) === id);
+    if (index === -1) favorites.push({ id, name: team.name, country: team.country ?? "International", league: team.league ?? "", logo: team.logo ?? "" });
+    else favorites.splice(index, 1);
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+    return favorites.some((item) => Number(item?.id ?? item) === id);
+}
 
 function normalizeFixture(fixture) {
     const status = fixture.fixture?.status?.short;
@@ -55,20 +63,14 @@ function createTeamPage() {
     if (!app) return;
     if (!selected?.id) { app.innerHTML = `<div class="team-page__empty"><h2>Team not found</h2><p>Select a team from the Teams page.</p><button type="button" data-back>Back to Teams</button></div>`; app.querySelector("[data-back]").onclick = () => { window.location.hash = "#teams"; }; return; }
 
-    const favorite = getFavorites().includes(selected.id);
-    app.innerHTML = `<section class="team-page"><button class="team-page__back" type="button" data-back>← Back to Teams</button><div class="team-page__hero"><div class="team-page__identity"><div class="team-page__logo"><img src="${selected.logo ?? ""}" alt="${selected.name ?? "Team"} logo"></div><div><span>CLUB PROFILE</span><h1>${selected.name ?? "Team"}</h1><p>${selected.country ?? "International"}${selected.league ? ` · ${selected.league}` : ""}</p></div></div><button class="team-page__favorite ${favorite ? "is-favorite" : ""}" type="button" data-favorite aria-pressed="${favorite}">${favorite ? "★ Favorited" : "☆ Favorite"}</button></div><div class="team-page__stats" data-stats><div><span>COUNTRY</span><strong>Loading…</strong></div><div><span>TEAM ID</span><strong>#${selected.id}</strong></div><div><span>TYPE</span><strong>Club</strong></div></div><section class="team-page__section"><div class="team-page__heading"><span>TEAM FORM</span><h2>Performance</h2><p>Recent results from the fixtures available for this team.</p></div><div class="team-page__performance" data-performance><div class="team-page__empty">Loading statistics…</div></div></section><section class="team-page__section"><div class="team-page__heading"><span>MATCH CENTER</span><h2>Team Matches</h2><p>Live matches, upcoming fixtures and recent results for this club.</p></div><div class="team-page__tabs"><button class="is-active" data-view="live" type="button">Live</button><button data-view="upcoming" type="button">Upcoming</button><button data-view="recent" type="button">Recent Results</button></div><div class="team-page__matches" data-live>Loading live matches…</div><div class="team-page__matches" data-upcoming hidden>Loading matches…</div><div class="team-page__matches" data-recent hidden>Loading results…</div></section><section class="team-page__section team-page__squad-section"><div class="team-page__heading"><span>CLUB ROSTER</span><h2>Squad</h2><p>Players currently listed in this team's squad.</p></div><div class="team-page__squad" data-squad><div class="team-page__empty">Loading squad…</div></div></section></section>`;
+    const favorite = getFavorites().some((item) => Number(item?.id ?? item) === Number(selected.id));
+    app.innerHTML = `<section class="team-page"><button class="team-page__back" type="button" data-back>← Back to Teams</button><div class="team-page__hero"><div class="team-page__identity"><div class="team-page__logo"><img src="${selected.logo ?? ""}" alt="${selected.name ?? "Team"} logo"></div><div><span>CLUB PROFILE</span><h1>${selected.name ?? "Team"}</h1><p>${selected.country ?? "International"}${selected.league ? ` · ${selected.league}` : ""}</p></div></div><button class="team-page__favorite ${favorite ? "is-favorite" : ""}" type="button" data-favorite aria-pressed="${favorite}">${favorite ? "★ Favorited" : "☆ Favorite"}</button></div><div class="team-page__stats" data-stats><div><span>COUNTRY</span><strong>${selected.country ?? "International"}</strong></div><div><span>TEAM ID</span><strong>#${selected.id}</strong></div><div><span>TYPE</span><strong>Club</strong></div></div><section class="team-page__section"><div class="team-page__heading"><span>TEAM FORM</span><h2>Performance</h2><p>Recent results from the fixtures available for this team.</p></div><div class="team-page__performance" data-performance><div class="team-page__empty">Loading statistics…</div></div></section><section class="team-page__section"><div class="team-page__heading"><span>MATCH CENTER</span><h2>Team Matches</h2><p>Live matches, upcoming fixtures and recent results for this club.</p></div><div class="team-page__tabs"><button class="is-active" data-view="live" type="button">Live</button><button data-view="upcoming" type="button">Upcoming</button><button data-view="recent" type="button">Recent Results</button></div><div class="team-page__matches" data-live>Loading live matches…</div><div class="team-page__matches" data-upcoming hidden>Loading matches…</div><div class="team-page__matches" data-recent hidden>Loading results…</div></section><section class="team-page__section team-page__squad-section"><div class="team-page__heading"><span>CLUB ROSTER</span><h2>Squad</h2><p>Players currently listed in this team's squad.</p></div><div class="team-page__squad" data-squad><div class="team-page__empty">Loading squad…</div></div></section></section>`;
 
     app.querySelector("[data-back]").onclick = () => { sessionStorage.removeItem(SELECTED_TEAM_KEY); window.location.hash = "#teams"; };
-    app.querySelector("[data-favorite]").onclick = (event) => { const active = toggleFavorite(selected.id); event.currentTarget.classList.toggle("is-favorite", active); event.currentTarget.textContent = active ? "★ Favorited" : "☆ Favorite"; event.currentTarget.setAttribute("aria-pressed", String(active)); };
+    app.querySelector("[data-favorite]").onclick = (event) => { const active = toggleFavorite(selected); event.currentTarget.classList.toggle("is-favorite", active); event.currentTarget.textContent = active ? "★ Favorited" : "☆ Favorite"; event.currentTarget.setAttribute("aria-pressed", String(active)); };
     app.querySelectorAll("[data-view]").forEach((button) => { button.onclick = () => { const view = button.dataset.view; app.querySelectorAll("[data-view]").forEach((item) => item.classList.toggle("is-active", item === button)); app.querySelector("[data-live]").hidden = view !== "live"; app.querySelector("[data-upcoming]").hidden = view !== "upcoming"; app.querySelector("[data-recent]").hidden = view !== "recent"; }; });
 
     (async () => {
-        try {
-            const data = await getTeam(selected.id);
-            const team = data.response?.[0]?.team ?? selected;
-            app.querySelector("[data-stats]").innerHTML = `<div><span>COUNTRY</span><strong>${team.country ?? "International"}</strong></div><div><span>TEAM ID</span><strong>#${team.id ?? selected.id}</strong></div><div><span>TYPE</span><strong>${team.national ? "National" : "Club"}</strong></div>`;
-        } catch { app.querySelector("[data-stats]").innerHTML = `<div><span>STATUS</span><strong>API unavailable</strong></div>`; }
-
         try {
             const season = new Date().getFullYear();
             const [liveData, upcomingData, recentData] = await Promise.all([getLiveMatches(), getTeamFixtures(selected.id, season, 12), getTeamRecentFixtures(selected.id, season, 12)]);
