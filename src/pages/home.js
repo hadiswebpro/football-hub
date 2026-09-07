@@ -54,16 +54,16 @@ function renderHome() {
             <div class="home-match-strip" data-live></div>
         </section>
         <section class="home-section home-section--matches">
-            <div class="section-heading home-section-heading-row"><div><span class="section-heading__eyebrow">MATCH CENTER</span><h2>Matches</h2><p>A quick look at what's next and what happened yesterday.</p></div><a class="home-section__link" href="#matches">View all matches ↗</a></div>
+            <div class="section-heading home-section-heading-row"><div><span class="section-heading__eyebrow">MATCH CENTER</span><h2>Matches</h2><p>A quick look at what's next and what happened yesterday.</p><a class="home-section__link" href="#matches">View all matches ↗</a></div></div>
             <div class="home-match-block"><div class="home-match-block__title"><span>UPCOMING</span><small>Today &amp; tomorrow</small></div><div class="home-match-strip" data-upcoming></div></div>
             <div class="home-match-block"><div class="home-match-block__title"><span>YESTERDAY'S RESULTS</span><small>Latest completed games</small></div><div class="home-match-strip" data-results></div></div>
         </section>
         <section class="home-section home-section--leagues">
-            <div class="section-heading home-section-heading-row"><div><span class="section-heading__eyebrow">EXPLORE</span><h2>Top Leagues</h2><p>The competitions everyone is watching.</p></div><a class="home-section__link" href="#leagues">View all leagues ↗</a></div>
+            <div class="section-heading home-section-heading-row"><div><span class="section-heading__eyebrow">EXPLORE</span><h2>Top Leagues</h2><p>The competitions everyone is watching.</p><a class="home-section__link" href="#leagues">View all leagues ↗</a></div></div>
             <div class="home-card-strip" data-leagues></div>
         </section>
         <section class="home-section home-section--teams">
-            <div class="section-heading home-section-heading-row"><div><span class="section-heading__eyebrow">FAN FAVORITES</span><h2>Popular Teams</h2><p>Keep up with the biggest clubs in world football.</p></div><a class="home-section__link" href="#teams">View all teams ↗</a></div>
+            <div class="section-heading home-section-heading-row"><div><span class="section-heading__eyebrow">FAN FAVORITES</span><h2>Popular Teams</h2><p>Keep up with the biggest clubs in world football.</p><a class="home-section__link" href="#teams">View all teams ↗</a></div></div>
             <div class="home-card-strip home-card-strip--teams" data-teams></div>
         </section>
     `;
