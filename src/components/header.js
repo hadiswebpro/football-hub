@@ -9,6 +9,7 @@ function createHeader() {
                 <a href="#teams" class="header__nav-link" data-route="teams"><span>Teams</span></a>
                 <a href="#leagues" class="header__nav-link" data-route="leagues"><span>Leagues</span></a>
                 <a href="#matches" class="header__nav-link" data-route="matches"><span>Matches</span></a>
+                <a href="#favorites" class="header__nav-link" data-route="favorites"><span>Favorites</span></a>
             </nav>
             <div class="header__search"><input type="search" id="searchInput" class="header__search-input" placeholder="Search teams, leagues..." autocomplete="off"><button type="button" class="header__search-btn" id="searchBtn" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg></button></div>
             <button type="button" class="header__mobile-search-btn" id="mobileSearchBtn" aria-label="Open search" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg></button>
@@ -26,7 +27,7 @@ function createHeader() {
     mobileSearchBtn.addEventListener("click", () => { const open = searchDropdown.classList.toggle("is-open"); mobileSearchBtn.setAttribute("aria-expanded", open); if (open) mobileSearchInput.focus(); });
     const updateActiveNav = () => {
         const hash = window.location.hash;
-        const activeRoute = ["#team", "#teams"].includes(hash) ? "teams" : ["#league", "#leagues"].includes(hash) ? "leagues" : hash === "#matches" ? "matches" : "home";
+        const activeRoute = ["#team", "#teams"].includes(hash) ? "teams" : ["#league", "#leagues"].includes(hash) ? "leagues" : hash === "#matches" ? "matches" : hash === "#favorites" ? "favorites" : "home";
         mainNav.querySelectorAll(".header__nav-link").forEach((link) => link.classList.toggle("active", link.dataset.route === activeRoute));
     };
     window.addEventListener("hashchange", updateActiveNav);
