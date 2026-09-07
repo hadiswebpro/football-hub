@@ -114,10 +114,13 @@ function createMatchPage() {
             if (!document.querySelector(".match-page")) return clearInterval(refresh);
             try {
                 const latest = await getFixtureDetails(match.fixtureId);
-                if (!latest) return;
-                match.home.score = latest.goals?.home;
-                match.away.score = latest.goals?.away;
-                match.minute = latest.fixture?.status?.elapsed ? `${latest.fixture.status.elapsed}'` : match.minute;
+                const fixture = latest?.fixture;
+                if (!fixture) return;
+
+                match.home.score = fixture.goals?.home;
+                match.away.score = fixture.goals?.away;
+                match.minute = fixture.status?.elapsed ? `${fixture.status.elapsed}'` : match.minute;
+
                 app.querySelector(".match-page__score").innerHTML = `<span>${match.home.score ?? "–"}</span><b>:</b><span>${match.away.score ?? "–"}</span>`;
                 app.querySelector(".match-page__status").innerHTML = `<i></i>LIVE · ${match.minute}`;
             } catch { /* keep the current score when refresh fails */ }
