@@ -1,6 +1,7 @@
 import { formatDate, getLeagueStatus } from "../utils/date";
 import { getLeagueFixtures, getLeagueRecentFixtures } from "../api/matches";
 import { getLeagueStandings } from "../api/standings";
+import { getLeagueTeams } from "../api/teams";
 import createMatchCard from "../components/matchcard";
 
 const SELECTED_LEAGUE_KEY = "football-hub-selected-league";
@@ -54,29 +55,32 @@ function renderStandings(target, standings) {
     target.innerHTML = `
         <div class="league-page__table-wrap">
             <table class="league-page__table">
-                <thead>
-                    <tr><th>#</th><th>Team</th><th>MP</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>PTS</th><th>Form</th></tr>
-                </thead>
-                <tbody>
-                    ${standings.map((item) => {
-                        const team = item.team ?? {};
-                        const goals = item.goalsDiff ?? 0;
-                        const form = (item.form ?? "").slice(-5).split("").map((result) => {
-                            const className = result === "W" ? "win" : result === "D" ? "draw" : result === "L" ? "loss" : "";
-                            return `<span class="league-page__form-dot league-page__form-dot--${className}" title="${result}">${result}</span>`;
-                        }).join("");
-
-                        return `
-                            <tr>
-                                <td class="league-page__rank">${item.rank ?? "–"}</td>
-                                <td><div class="league-page__table-team"><img src="${team.logo ?? ""}" alt="${team.name ?? "Team"} logo"><strong>${team.name ?? "Team"}</strong></div></td>
-                                <td>${item.all?.played ?? 0}</td><td>${item.all?.win ?? 0}</td><td>${item.all?.draw ?? 0}</td><td>${item.all?.lose ?? 0}</td><td>${goals > 0 ? `+${goals}` : goals}</td><td class="league-page__points">${item.points ?? 0}</td><td><div class="league-page__form">${form || "–"}</div></td>
-                            </tr>`;
-                    }).join("")}
-                </tbody>
+                <thead><tr><th>#</th><th>Team</th><th>MP</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>PTS</th><th>Form</th></tr></thead>
+                <tbody>${standings.map((item) => {
+                    const team = item.team ?? {};
+                    const goals = item.goalsDiff ?? 0;
+                    const form = (item.form ?? "").slice(-5).split("").map((result) => {
+                        const className = result === "W" ? "win" : result === "D" ? "draw" : result === "L" ? "loss" : "";
+                        return `<span class="league-page__form-dot league-page__form-dot--${className}" title="${result}">${result}</span>`;
+                    }).join("");
+                    return `<tr><td class="league-page__rank">${item.rank ?? "–"}</td><td><div class="league-page__table-team"><img src="${team.logo ?? ""}" alt="${team.name ?? "Team"} logo"><strong>${team.name ?? "Team"}</strong></div></td><td>${item.all?.played ?? 0}</td><td>${item.all?.win ?? 0}</td><td>${item.all?.draw ?? 0}</td><td>${item.all?.lose ?? 0}</td><td>${goals > 0 ? `+${goals}` : goals}</td><td class="league-page__points">${item.points ?? 0}</td><td><div class="league-page__form">${form || "–"}</div></td></tr>`;
+                }).join("")}</tbody>
             </table>
-        </div>
-    `;
+        </div>`;
+}
+
+function renderLeagueTeams(target, teams) {
+    if (!teams.length) {
+        target.innerHTML = `<div class="league-page__empty league-page__empty--inline"><span>NO DATA</span><h2>No teams found</h2><p>There is no team data available for this season.</p></div>`;
+        return;
+    }
+
+    target.innerHTML = `<div class="league-page__team-grid">${teams.map(({ team = {} }) => `
+        <article class="league-page__team-card">
+            <div class="league-page__team-logo"><img src="${team.logo ?? ""}" alt="${team.name ?? "Team"} logo"></div>
+            <div class="league-page__team-info"><h3>${team.name ?? "Team"}</h3><p>${team.country ?? "International"}</p></div>
+            <div class="league-page__team-footer"><span>League team</span><span>↗</span></div>
+        </article>`).join("")}</div>`;
 }
 
 async function loadLeagueMatches(app, competition) {
@@ -84,22 +88,14 @@ async function loadLeagueMatches(app, competition) {
     const leagueId = competition.league.id;
     const upcomingTarget = app.querySelector("[data-fixtures='upcoming']");
     const recentTarget = app.querySelector("[data-fixtures='recent']");
-
     if (!season?.year) {
         const message = `<div class="league-page__empty league-page__empty--inline"><span>SEASON UNAVAILABLE</span><h2>Fixtures unavailable</h2><p>This competition does not have a season selected yet.</p></div>`;
-        upcomingTarget.innerHTML = message;
-        recentTarget.innerHTML = message;
-        return;
+        upcomingTarget.innerHTML = message; recentTarget.innerHTML = message; return;
     }
-
     upcomingTarget.innerHTML = `<div class="league-page__loading">Loading upcoming matches…</div>`;
     recentTarget.innerHTML = `<div class="league-page__loading">Loading recent results…</div>`;
-
     try {
-        const [upcomingData, recentData] = await Promise.all([
-            getLeagueFixtures(leagueId, season.year, 12),
-            getLeagueRecentFixtures(leagueId, season.year, 12)
-        ]);
+        const [upcomingData, recentData] = await Promise.all([getLeagueFixtures(leagueId, season.year, 12), getLeagueRecentFixtures(leagueId, season.year, 12)]);
         const upcoming = (upcomingData.response ?? []).map(normalizeFixture).filter((fixture) => fixture.status === "SCHEDULED").sort((a, b) => new Date(a.date) - new Date(b.date));
         const recent = (recentData.response ?? []).map(normalizeFixture).filter((fixture) => fixture.status === "FINISHED").sort((a, b) => new Date(b.date) - new Date(a.date));
         renderFixtureGrid(upcomingTarget, upcoming, "There are no upcoming fixtures available for this season.");
@@ -116,30 +112,34 @@ async function loadLeagueTable(app, competition) {
     const season = competition.seasons?.find((item) => item.current === true) ?? competition.seasons?.[0];
     const target = app.querySelector("[data-standings]");
     if (!target) return;
-
-    if (!season?.year) {
-        target.innerHTML = `<div class="league-page__empty league-page__empty--inline"><span>SEASON UNAVAILABLE</span><h2>Standings unavailable</h2><p>This competition does not have a season selected yet.</p></div>`;
-        return;
-    }
-
+    if (!season?.year) { target.innerHTML = `<div class="league-page__empty league-page__empty--inline"><span>SEASON UNAVAILABLE</span><h2>Standings unavailable</h2><p>This competition does not have a season selected yet.</p></div>`; return; }
     target.innerHTML = `<div class="league-page__loading">Loading league table…</div>`;
-
     try {
         const data = await getLeagueStandings(competition.league.id, season.year);
-        const groups = data.response?.[0]?.league?.standings ?? [];
-        const standings = groups.flat();
+        const standings = (data.response?.[0]?.league?.standings ?? []).flat();
         renderStandings(target, standings);
         app.querySelector("[data-count='table']").textContent = `${standings.length} team${standings.length === 1 ? "" : "s"}`;
-    } catch {
-        target.innerHTML = `<div class="league-page__empty league-page__empty--inline"><span>API ERROR</span><h2>Could not load table</h2><p>Please check your API key and try again.</p></div>`;
-    }
+    } catch { target.innerHTML = `<div class="league-page__empty league-page__empty--inline"><span>API ERROR</span><h2>Could not load table</h2><p>Please check your API key and try again.</p></div>`; }
+}
+
+async function loadLeagueTeams(app, competition) {
+    const season = competition.seasons?.find((item) => item.current === true) ?? competition.seasons?.[0];
+    const target = app.querySelector("[data-teams]");
+    if (!target) return;
+    if (!season?.year) { target.innerHTML = `<div class="league-page__empty league-page__empty--inline"><span>SEASON UNAVAILABLE</span><h2>Teams unavailable</h2><p>This competition does not have a season selected yet.</p></div>`; return; }
+    target.innerHTML = `<div class="league-page__loading">Loading league teams…</div>`;
+    try {
+        const data = await getLeagueTeams(competition.league.id, season.year);
+        const teams = data.response ?? [];
+        renderLeagueTeams(target, teams);
+        app.querySelector("[data-count='teams']").textContent = `${teams.length} team${teams.length === 1 ? "" : "s"}`;
+    } catch { target.innerHTML = `<div class="league-page__empty league-page__empty--inline"><span>API ERROR</span><h2>Could not load teams</h2><p>Please check your API key and try again.</p></div>`; }
 }
 
 function createLeaguePage() {
     const app = document.querySelector("#app");
     const competition = getSelectedLeague();
     if (!app || !competition?.league) return;
-
     const currentSeason = competition.seasons?.find((season) => season.current === true) ?? competition.seasons?.[0];
     const status = currentSeason ? getLeagueStatus(currentSeason.start, currentSeason.end) : "Unknown";
     const isFavorite = getFavorites().includes(competition.league.id);
@@ -153,7 +153,7 @@ function createLeaguePage() {
             <section class="league-page__content is-active" data-content="overview"><div class="league-page__section-heading"><span>LEAGUE CENTER</span><h2>${competition.league.name}</h2><p>Follow fixtures, results and standings from this competition.</p></div><div class="league-page__overview-grid"><article class="league-page__panel league-page__panel--featured"><span class="league-page__panel-label">UPCOMING</span><div class="league-page__panel-icon">→</div><h3>Upcoming matches</h3><p>Jump to the next fixtures from this competition.</p><button class="league-page__panel-link" type="button" data-jump="matches">View fixtures ↗</button></article><article class="league-page__panel"><span class="league-page__panel-label">RESULTS</span><div class="league-page__panel-icon">✓</div><h3>Recent results</h3><p>Review the latest completed matches and scores.</p><button class="league-page__panel-link" type="button" data-jump="matches">View results ↗</button></article><article class="league-page__panel"><span class="league-page__panel-label">STANDINGS</span><div class="league-page__panel-icon">#</div><h3>League table</h3><p>Track the teams competing for the top positions.</p><button class="league-page__panel-link" type="button" data-jump="table">Open table ↗</button></article></div></section>
             <section class="league-page__content" data-content="matches"><div class="league-page__section-heading"><span>FIXTURES</span><h2>League Matches</h2><p>Upcoming fixtures and the latest completed results.</p></div><div class="league-page__fixture-section"><div class="league-page__fixture-heading"><h3>Upcoming</h3><span data-count="upcoming">Loading…</span></div><div class="league-page__fixture-grid" data-fixtures="upcoming"></div></div><div class="league-page__fixture-section"><div class="league-page__fixture-heading"><h3>Recent Results</h3><span data-count="recent">Loading…</span></div><div class="league-page__fixture-grid" data-fixtures="recent"></div></div></section>
             <section class="league-page__content" data-content="table"><div class="league-page__section-heading"><span>STANDINGS</span><h2>League Table</h2><p>Current positions, points and recent form.</p></div><div class="league-page__table-header"><span>LIVE STANDINGS</span><strong data-count="table">Loading…</strong></div><div data-standings></div></section>
-            <section class="league-page__content" data-content="teams"><div class="league-page__empty"><span>03</span><h2>League Teams</h2><p>Team data will be connected in the next step.</p></div></section>
+            <section class="league-page__content" data-content="teams"><div class="league-page__section-heading"><span>COMPETITION SQUAD</span><h2>League Teams</h2><p>All teams participating in this competition and season.</p></div><div class="league-page__table-header"><span>REGISTERED TEAMS</span><strong data-count="teams">Loading…</strong></div><div data-teams></div></section>
         </section>
     `;
 
@@ -164,6 +164,7 @@ function createLeaguePage() {
     app.querySelectorAll("[data-jump]").forEach((button) => button.addEventListener("click", () => activatePanel(button.dataset.jump)));
     loadLeagueMatches(app, competition);
     loadLeagueTable(app, competition);
+    loadLeagueTeams(app, competition);
 }
 
 export default createLeaguePage;
