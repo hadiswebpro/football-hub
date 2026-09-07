@@ -10,6 +10,7 @@ import "./styles/team-page.css";
 import "./styles/directory-page.css";
 import "./styles/home-sections.css";
 import "./styles/favorites-page.css";
+import "./styles/search-page.css";
 import "./styles/responsive.css";
 
 import createHeader from "./components/header";
@@ -21,6 +22,7 @@ import createTeamPage from "./pages/team";
 import createTeamsPage from "./pages/teams";
 import createLeaguesPage from "./pages/leagues";
 import createFavoritesPage from "./pages/favorites";
+import createSearchPage from "./pages/search";
 
 createHeader();
 
@@ -33,6 +35,7 @@ function renderRoute() {
     if (hash === "#teams") { createTeamsPage(); return; }
     if (hash === "#leagues") { createLeaguesPage(); return; }
     if (hash === "#favorites") { createFavoritesPage(); return; }
+    if (hash.startsWith("#search")) { createSearchPage(); return; }
     loadCompetitions();
 }
 
