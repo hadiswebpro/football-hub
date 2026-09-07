@@ -1,5 +1,6 @@
 const API_URL = "https://v3.football.api-sports.io/teams";
-const API_KEY = "";
+const API_KEY ="";
+
 
 async function getTeams() {
     const response = await fetch(API_URL, {

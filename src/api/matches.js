@@ -1,5 +1,10 @@
+
 const API_BASE = "https://v3.football.api-sports.io";
+
+
+const API_URL = "https://v3.football.api-sports.io/fixtures";
 const API_KEY = "";
+
 
 async function request(path) {
     const response = await fetch(`${API_BASE}${path}`, {
