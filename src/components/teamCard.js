@@ -5,11 +5,13 @@ function getFavoriteTeams() {
     try { return JSON.parse(localStorage.getItem(FAVORITES_KEY)) || []; } catch { return []; }
 }
 
-function saveFavoriteTeams(ids) { localStorage.setItem(FAVORITES_KEY, JSON.stringify(ids)); }
+function saveFavoriteTeams(teams) { localStorage.setItem(FAVORITES_KEY, JSON.stringify(teams)); }
 
 function createTeamCard(team) {
     const card = document.createElement("article");
-    const isFavorite = getFavoriteTeams().includes(team.id);
+    const favoriteTeams = getFavoriteTeams();
+    const favoriteId = Number(team.id);
+    const isFavorite = favoriteTeams.some((item) => Number(item?.id ?? item) === favoriteId);
     card.className = "team-card";
     card.setAttribute("tabindex", "0");
     card.setAttribute("role", "button");
@@ -24,11 +26,21 @@ function createTeamCard(team) {
     const favoriteButton = card.querySelector(".team-card__favorite");
     favoriteButton.addEventListener("click", (event) => {
         event.stopPropagation();
-        const ids = getFavoriteTeams();
-        const index = ids.indexOf(team.id);
-        if (index === -1) ids.push(team.id); else ids.splice(index, 1);
-        saveFavoriteTeams(ids);
-        const active = ids.includes(team.id);
+        const teams = getFavoriteTeams();
+        const index = teams.findIndex((item) => Number(item?.id ?? item) === favoriteId);
+        if (index === -1) {
+            teams.push({
+                id: favoriteId,
+                name: team.name,
+                country: team.country ?? "International",
+                league: team.league ?? "",
+                logo: team.logo ?? ""
+            });
+        } else {
+            teams.splice(index, 1);
+        }
+        saveFavoriteTeams(teams);
+        const active = teams.some((item) => Number(item?.id ?? item) === favoriteId);
         favoriteButton.classList.toggle("is-favorite", active);
         favoriteButton.setAttribute("aria-pressed", String(active));
         favoriteButton.setAttribute("aria-label", `${active ? "Remove" : "Add"} ${team.name} ${active ? "from" : "to"} favorites`);
