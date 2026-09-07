@@ -82,7 +82,7 @@ function createTeamPage() {
             renderMatches(app.querySelector("[data-live]"), live, "No live match for this team right now.");
             renderMatches(app.querySelector("[data-upcoming]"), upcoming, "No upcoming matches found.");
             renderMatches(app.querySelector("[data-recent]"), recent, "No recent results found.", "desc");
-            renderPerformance(app.querySelector("[data-performance]"), recentRaw, selected.id);
+            renderPerformance(app.querySelector("[data-performance]"), calculatePerformance(recentRaw, selected.id));
         } catch { app.querySelector("[data-live]").innerHTML = `<div class="team-page__empty">Could not load live matches. Please check your API key.</div>`; app.querySelector("[data-upcoming]").innerHTML = `<div class="team-page__empty">Could not load team matches. Please check your API key.</div>`; app.querySelector("[data-recent]").innerHTML = `<div class="team-page__empty">Could not load team results. Please check your API key.</div>`; app.querySelector("[data-performance]").innerHTML = `<div class="team-page__empty">Could not load team statistics. Please check your API key.</div>`; }
 
         try { const data = await getTeamSquad(selected.id); renderSquad(app.querySelector("[data-squad]"), data.response?.[0]?.players ?? []); } catch { app.querySelector("[data-squad]").innerHTML = `<div class="team-page__empty"><h2>Could not load squad</h2><p>Please check your API key and try again.</p></div>`; }
