@@ -29,8 +29,8 @@ function normalizeFixture(fixture) {
         minute: fixture.fixture?.status?.elapsed ? `${fixture.fixture.status.elapsed}'` : "",
         time: isLive ? "Live now" : new Date(fixture.fixture?.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         date: fixture.fixture?.date ?? "",
-        home: { name: fixture.teams?.home?.name ?? "Home", score: fixture.goals?.home ?? null, logo: fixture.teams?.home?.logo ?? "" },
-        away: { name: fixture.teams?.away?.name ?? "Away", score: fixture.goals?.away ?? null, logo: fixture.teams?.away?.logo ?? "" }
+        home: { id: fixture.teams?.home?.id, name: fixture.teams?.home?.name ?? "Home", score: fixture.goals?.home ?? null, logo: fixture.teams?.home?.logo ?? "" },
+        away: { id: fixture.teams?.away?.id, name: fixture.teams?.away?.name ?? "Away", score: fixture.goals?.away ?? null, logo: fixture.teams?.away?.logo ?? "" }
     };
 }
 
@@ -44,11 +44,18 @@ function groupByLeague(fixtures) {
     return [...groups.values()];
 }
 
-function renderLeagueGroups(container, fixtures) {
+function renderLeagueGroups(container, fixtures, query = "") {
     container.innerHTML = "";
-    const groups = groupByLeague(fixtures);
+    const normalizedQuery = query.trim().toLowerCase();
+    const filteredFixtures = fixtures.filter((fixture) => {
+        if (!normalizedQuery) return true;
+        const match = normalizeFixture(fixture);
+        return `${match.home.name} ${match.away.name} ${match.league} ${match.country}`.toLowerCase().includes(normalizedQuery);
+    });
+    const groups = groupByLeague(filteredFixtures);
+
     if (!groups.length) {
-        container.innerHTML = `<div class="matches-page__empty"><span>NO MATCHES</span><h2>No matches found</h2><p>There are no fixtures available for this date.</p></div>`;
+        container.innerHTML = `<div class="matches-page__empty"><span>NO MATCHES</span><h2>No matches found</h2><p>Try another team or league name.</p></div>`;
         return;
     }
 
@@ -79,10 +86,13 @@ function createMatchesPage() {
         <section class="matches-page">
             <div class="matches-page__top">
                 <div><span class="section-heading__eyebrow">MATCH CENTER</span><h1>Matches</h1><p>Follow the matches happening yesterday, today and tomorrow.</p></div>
-                <div class="matches-page__date-controls" role="tablist" aria-label="Match dates">
-                    <button class="matches-page__date-button" type="button" data-date="yesterday" role="tab" aria-selected="false">Yesterday</button>
-                    <button class="matches-page__date-button is-active" type="button" data-date="today" role="tab" aria-selected="true">Today</button>
-                    <button class="matches-page__date-button" type="button" data-date="tomorrow" role="tab" aria-selected="false">Tomorrow</button>
+                <div class="matches-page__controls">
+                    <input class="matches-page__search" type="search" placeholder="Search teams or leagues…" aria-label="Search matches" data-match-search>
+                    <div class="matches-page__date-controls" role="tablist" aria-label="Match dates">
+                        <button class="matches-page__date-button" type="button" data-date="yesterday" role="tab" aria-selected="false">Yesterday</button>
+                        <button class="matches-page__date-button is-active" type="button" data-date="today" role="tab" aria-selected="true">Today</button>
+                        <button class="matches-page__date-button" type="button" data-date="tomorrow" role="tab" aria-selected="false">Tomorrow</button>
+                    </div>
                 </div>
             </div>
             <div class="matches-page__summary"><span class="matches-page__result-label">TODAY</span><strong data-count>Loading…</strong></div>
@@ -95,29 +105,41 @@ function createMatchesPage() {
     const loading = app.querySelector("[data-matches-loading]");
     const count = app.querySelector("[data-count]");
     const resultLabel = app.querySelector(".matches-page__result-label");
+    const search = app.querySelector("[data-match-search]");
     const cache = new Map();
     const labels = { yesterday: "YESTERDAY", today: "TODAY", tomorrow: "TOMORROW" };
     const offsets = { yesterday: -1, today: 0, tomorrow: 1 };
+    let activeFixtures = [];
+
+    const renderCurrent = () => {
+        const normalizedQuery = search.value.trim().toLowerCase();
+        const visible = activeFixtures.filter((fixture) => {
+            if (!normalizedQuery) return true;
+            const match = normalizeFixture(fixture);
+            return `${match.home.name} ${match.away.name} ${match.league} ${match.country}`.toLowerCase().includes(normalizedQuery);
+        });
+        count.textContent = `${visible.length} match${visible.length === 1 ? "" : "es"}`;
+        renderLeagueGroups(groups, activeFixtures, search.value);
+    };
 
     const loadDate = async (dateKey) => {
         if (cache.has(dateKey)) {
-            const fixtures = cache.get(dateKey);
+            activeFixtures = cache.get(dateKey);
             loading.hidden = true; groups.hidden = false; resultLabel.textContent = labels[dateKey];
-            count.textContent = `${fixtures.length} match${fixtures.length === 1 ? "" : "es"}`;
-            renderLeagueGroups(groups, fixtures); return;
+            renderCurrent(); return;
         }
         loading.hidden = false; groups.hidden = true; loading.textContent = `Loading ${dateKey === "today" ? "today's" : dateKey === "yesterday" ? "yesterday's" : "tomorrow's"} matches…`;
         try {
-            const fixtures = (await getMatchesByDate(getDate(offsets[dateKey]))).response ?? [];
-            cache.set(dateKey, fixtures); loading.hidden = true; groups.hidden = false;
-            resultLabel.textContent = labels[dateKey]; count.textContent = `${fixtures.length} match${fixtures.length === 1 ? "" : "es"}`;
-            renderLeagueGroups(groups, fixtures);
+            activeFixtures = (await getMatchesByDate(getDate(offsets[dateKey]))).response ?? [];
+            cache.set(dateKey, activeFixtures); loading.hidden = true; groups.hidden = false;
+            resultLabel.textContent = labels[dateKey]; renderCurrent();
         } catch {
             loading.hidden = false; groups.hidden = true;
             loading.innerHTML = `<div class="matches-page__empty"><span>API ERROR</span><h2>Could not load matches</h2><p>Please check your API key and try again.</p></div>`;
         }
     };
 
+    search.addEventListener("input", renderCurrent);
     app.querySelectorAll("[data-date]").forEach((button) => {
         button.addEventListener("click", () => {
             app.querySelectorAll("[data-date]").forEach((item) => {
