@@ -1,22 +1,7 @@
-const API_BASE = "https://v3.football.api-sports.io";
-const API_KEY = "";
+import { request, TTL } from "./client";
 
 async function getLeagueTeams(leagueId, season) {
-    const response = await fetch(`${API_BASE}/teams?league=${encodeURIComponent(leagueId)}&season=${encodeURIComponent(season)}`, {
-        headers: { "x-apisports-key": API_KEY }
-    });
-
-    if (!response.ok) {
-        throw new Error(`Football API request failed: ${response.status}`);
-    }
-
-    const data = await response.json();
-
-    if (data.errors && Object.keys(data.errors).length > 0) {
-        throw new Error("Football API returned an error.");
-    }
-
-    return data;
+    return request(`/teams?league=${encodeURIComponent(leagueId)}&season=${encodeURIComponent(season)}`, TTL.stable);
 }
 
 export { getLeagueTeams };
