@@ -1,22 +1,17 @@
 import createTeamCard from "../components/teamCard";
+import { getLeagueTeams } from "../api/teams";
 
-const API_BASE = "https://v3.football.api-sports.io";
-const API_KEY = "";
 const CURRENT_SEASON = new Date().getFullYear();
 const FEATURED_LEAGUES = [39, 140, 78, 135, 61, 2, 3, 4];
 
-async function getLeagueTeams(leagueId, season) {
-    const response = await fetch(`${API_BASE}/teams?league=${leagueId}&season=${season}`, {
-        headers: { "x-apisports-key": API_KEY }
-    });
-    if (!response.ok) throw new Error(`Football API request failed: ${response.status}`);
-    const data = await response.json();
-    if (data.errors && Object.keys(data.errors).length > 0) throw new Error("Football API returned an error.");
-    return data.response ?? [];
-}
-
 async function getAllTeams() {
-    const results = await Promise.all(FEATURED_LEAGUES.map((leagueId) => getLeagueTeams(leagueId, CURRENT_SEASON)));
+    const results = await Promise.all(
+        FEATURED_LEAGUES.map(async (leagueId) => {
+            const data = await getLeagueTeams(leagueId, CURRENT_SEASON);
+            return data.response ?? [];
+        })
+    );
+
     const teamsById = new Map();
 
     results.flat().forEach(({ team, league }) => {
