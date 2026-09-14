@@ -9,10 +9,30 @@ function getLeagueSortIndex(league) {
     return index === -1 ? Number.MAX_SAFE_INTEGER : index;
 }
 
+function createLeagueSkeletons(count = 6) {
+    return Array.from({ length: count }, () => `
+        <article class="skeleton-card" aria-hidden="true">
+            <div class="skeleton-card__top">
+                <span class="skeleton skeleton--text skeleton--short"></span>
+                <span class="skeleton skeleton--circle"></span>
+            </div>
+            <div class="skeleton-card__body">
+                <span class="skeleton skeleton--logo"></span>
+                <span class="skeleton skeleton--title skeleton--short"></span>
+                <span class="skeleton skeleton--text skeleton--short"></span>
+            </div>
+            <div class="skeleton-card__footer">
+                <span class="skeleton skeleton--text skeleton--short"></span>
+                <span class="skeleton skeleton--text" style="width:28px"></span>
+            </div>
+        </article>
+    `).join("");
+}
+
 function createLeaguesPage() {
     const app = document.querySelector("#app");
     if (!app) return;
-    app.innerHTML = `<section class="directory-page"><div class="directory-page__top"><div><span class="section-heading__eyebrow">COMPETITION DIRECTORY</span><h1>Leagues</h1><p>Browse competitions currently in progress.</p></div><input class="directory-page__search" type="search" placeholder="Search leagues…" aria-label="Search leagues" data-league-search disabled></div><div class="directory-page__content"><div class="directory-page__status" data-league-status>Loading leagues…</div><div class="leagues directory-page__grid" data-leagues></div></div></section>`;
+    app.innerHTML = `<section class="directory-page"><div class="directory-page__top"><div><span class="section-heading__eyebrow">COMPETITION DIRECTORY</span><h1>Leagues</h1><p>Browse competitions currently in progress.</p></div><input class="directory-page__search" type="search" placeholder="Search leagues…" aria-label="Search leagues" data-league-search disabled></div><div class="directory-page__content"><div class="directory-page__status" data-league-status>Loading leagues…</div><div class="leagues directory-page__grid" data-leagues><div class="skeleton-grid">${createLeagueSkeletons()}</div></div></div></section>`;
     const target = app.querySelector("[data-leagues]"), search = app.querySelector("[data-league-search]"), status = app.querySelector("[data-league-status]");
     let leagues = [];
     const render = (query = "") => {
@@ -24,7 +44,7 @@ function createLeaguesPage() {
         filtered.forEach((competition) => target.appendChild(createLeagueCard(competition)));
     };
     const load = async () => {
-        target.innerHTML = `<div class="directory-page__loading"><div>Loading leagues…</div></div>`;
+        target.innerHTML = `<div class="skeleton-grid">${createLeagueSkeletons()}</div>`;
         status.textContent = "Loading leagues…";
         search.disabled = true;
         try {
