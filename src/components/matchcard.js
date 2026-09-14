@@ -1,12 +1,25 @@
+const TEHRAN_TIMEZONE = "Asia/Tehran";
+
 function getMatchState(status) {
     if (status === "LIVE") return "live";
     if (status === "FINISHED") return "finished";
     return "scheduled";
 }
 
+function formatDate(date) {
+    if (!date) return "—";
+    return new Date(date).toLocaleDateString("en-GB", {
+        timeZone: TEHRAN_TIMEZONE,
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+    });
+}
+
 function createMatchCard(match) {
     const card = document.createElement("article");
     const state = getMatchState(match.status);
+    const dateLabel = match.dateLabel ?? formatDate(match.date);
 
     card.className = `match-card match-card--${state}`;
     card.setAttribute("tabindex", "0");
@@ -23,7 +36,7 @@ function createMatchCard(match) {
             <div class="match-card__score"><span>${match.home.score ?? "–"}</span><b>:</b><span>${match.away.score ?? "–"}</span></div>
             <div class="match-card__team"><div class="match-card__logo-wrap"><img src="${match.away.logo}" alt="${match.away.name} logo"></div><strong>${match.away.name}</strong></div>
         </div>
-        <div class="match-card__bottom"><span>${match.time}</span><span class="match-card__arrow" aria-hidden="true">↗</span></div>
+        <div class="match-card__bottom"><span>${dateLabel} · ${match.time}</span><span class="match-card__arrow" aria-hidden="true">↗</span></div>
     `;
 
     const openCard = () => {
