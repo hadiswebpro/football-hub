@@ -20,15 +20,27 @@ function createLeaguesPage() {
         const filtered = leagues.filter((competition) => `${competition.league?.name ?? ""} ${competition.country?.name ?? ""}`.toLowerCase().includes(normalized));
         target.innerHTML = "";
         status.textContent = normalized ? `${filtered.length} leagues found` : `${leagues.length} leagues`;
-        if (!filtered.length) { target.innerHTML = `<div class="directory-page__empty"><h2>No leagues found</h2><p>Try another league or country.</p></div>`; return; }
+        if (!filtered.length) { target.innerHTML = `<div class="directory-page__empty"><div><h2>No leagues found</h2><p>Try another league or country.</p></div></div>`; return; }
         filtered.forEach((competition) => target.appendChild(createLeagueCard(competition)));
     };
+    const load = async () => {
+        target.innerHTML = `<div class="directory-page__loading"><div>Loading leagues…</div></div>`;
+        status.textContent = "Loading leagues…";
+        search.disabled = true;
+        try {
+            const data = await getCurrentLeagues();
+            leagues = [...data].sort((a, b) => getLeagueSortIndex(a) - getLeagueSortIndex(b) || (a.league?.name ?? "").localeCompare(b.league?.name ?? ""));
+            if (!leagues.length) throw new Error("No leagues returned");
+            search.disabled = false;
+            render(search.value);
+        } catch {
+            status.textContent = "Unable to load leagues";
+            target.innerHTML = `<div class="directory-page__empty"><div><h2>Could not load leagues</h2><p>Please check your API key or connection and try again.</p><button class="ui-state__retry" type="button" data-league-retry>Retry</button></div></div>`;
+            target.querySelector("[data-league-retry]").addEventListener("click", load);
+        }
+    };
     search.addEventListener("input", (event) => render(event.target.value));
-    getCurrentLeagues().then((data) => {
-        leagues = [...data].sort((a, b) => getLeagueSortIndex(a) - getLeagueSortIndex(b) || (a.league?.name ?? "").localeCompare(b.league?.name ?? ""));
-        search.disabled = false;
-        render();
-    }).catch(() => { status.textContent = "Unable to load leagues"; target.innerHTML = `<div class="directory-page__empty"><h2>Could not load leagues</h2><p>Please check your API key and try again.</p></div>`; });
+    load();
 }
 
 export default createLeaguesPage;
