@@ -74,11 +74,26 @@ function createTeamsPage() {
         const filtered = teams.filter((team) => `${team.name} ${team.country} ${team.league}`.toLowerCase().includes(q));
         target.innerHTML = "";
         status.textContent = q ? `${filtered.length} teams found` : `${teams.length} teams`;
-        if (!filtered.length) { target.innerHTML = `<div class="directory-page__empty"><h2>No teams found</h2><p>Try another team, country or league.</p></div>`; return; }
+        if (!filtered.length) { target.innerHTML = `<div class="directory-page__empty"><div><h2>No teams found</h2><p>Try another team, country or league.</p></div></div>`; return; }
         filtered.forEach((team) => target.appendChild(createTeamCard(team)));
     };
+    const load = async () => {
+        target.innerHTML = `<div class="directory-page__loading"><div>Loading teams…</div></div>`;
+        status.textContent = "Loading teams…";
+        search.disabled = true;
+        try {
+            teams = await getAllTeams();
+            if (!teams.length) throw new Error("No teams returned");
+            search.disabled = false;
+            render(search.value);
+        } catch {
+            status.textContent = "Unable to load teams";
+            target.innerHTML = `<div class="directory-page__empty"><div><h2>Could not load teams</h2><p>Please check your API key or connection and try again.</p><button class="ui-state__retry" type="button" data-team-retry>Retry</button></div></div>`;
+            target.querySelector("[data-team-retry]").addEventListener("click", load);
+        }
+    };
     search.addEventListener("input", (e) => render(e.target.value));
-    getAllTeams().then((data) => { teams = data; search.disabled = false; render(); }).catch(() => { status.textContent = "Unable to load teams"; target.innerHTML = `<div class="directory-page__empty"><h2>Could not load teams</h2><p>No team data was returned.</p></div>`; });
+    load();
 }
 
 export default createTeamsPage;
