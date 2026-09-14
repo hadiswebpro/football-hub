@@ -5,6 +5,7 @@ import "./styles/hero.css";
 import "./styles/cards.css";
 import "./styles/logo-cards.css";
 import "./styles/ui-polish.css";
+import "./styles/skeleton.css";
 import "./styles/match-page.css";
 import "./styles/matches-page.css";
 import "./styles/league-page.css";
