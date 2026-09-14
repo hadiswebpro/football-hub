@@ -5,10 +5,27 @@ import { getLeagueTeams } from "../api/teams";
 import createMatchCard from "../components/matchcard";
 
 const SELECTED_LEAGUE_KEY = "football-hub-selected-league";
+const SELECTED_LEAGUE_BACKUP_KEY = "football-hub-selected-league-backup";
 const SELECTED_TEAM_KEY = "football-hub-selected-team";
 const FAVORITES_KEY = "football-hub-favorite-leagues";
 
-function getSelectedLeague() { try { return JSON.parse(sessionStorage.getItem(SELECTED_LEAGUE_KEY)); } catch { return null; } }
+function readStorage(key, fallbackKey = null) {
+    try {
+        const primary = sessionStorage.getItem(key);
+        if (primary) return JSON.parse(primary);
+        if (fallbackKey) {
+            const backup = localStorage.getItem(fallbackKey);
+            if (backup) {
+                const parsed = JSON.parse(backup);
+                sessionStorage.setItem(key, JSON.stringify(parsed));
+                return parsed;
+            }
+        }
+    } catch { /* ignore malformed storage */ }
+    return null;
+}
+
+function getSelectedLeague() { return readStorage(SELECTED_LEAGUE_KEY, SELECTED_LEAGUE_BACKUP_KEY); }
 function getFavorites() { try { return JSON.parse(localStorage.getItem(FAVORITES_KEY)) || []; } catch { return []; } }
 
 function normalizeFixture(item) {
@@ -63,7 +80,16 @@ async function loadLeagueTeams(app, competition) {
     if (!target) return;
     if (!season?.year) { target.innerHTML = `<div class="league-page__empty league-page__empty--inline"><span>SEASON UNAVAILABLE</span><h2>Teams unavailable</h2><p>There is no team data available for this season.</p></div>`; return; }
     target.innerHTML = `<div class="league-page__loading">Loading league teams…</div>`;
-    try { const data = await getLeagueTeams(competition.league.id, season.year), teams = data.response ?? []; renderLeagueTeams(target, teams); app.querySelector("[data-count='teams']").textContent = `${teams.length} team${teams.length === 1 ? "" : "s"}`; app.querySelector("[data-overview='teams']").textContent = teams.length; target.querySelectorAll("[data-team-id]").forEach((card) => card.addEventListener("click", () => { sessionStorage.setItem(SELECTED_TEAM_KEY, JSON.stringify({ id: Number(card.dataset.teamId), name: card.dataset.teamName, country: card.dataset.teamCountry, logo: card.dataset.teamLogo, league: competition.league.name })); window.location.hash = "#team"; })); } catch { target.innerHTML = `<div class="league-page__empty league-page__empty--inline"><span>API ERROR</span><h2>Could not load teams</h2><p>Please check your API key and try again.</p></div>`; }
+    try {
+        const data = await getLeagueTeams(competition.league.id, season.year), teams = data.response ?? [];
+        renderLeagueTeams(target, teams);
+        app.querySelector("[data-count='teams']").textContent = `${teams.length} team${teams.length === 1 ? "" : "s"}`;
+        app.querySelector("[data-overview='teams']").textContent = teams.length;
+        target.querySelectorAll("[data-team-id]").forEach((card) => card.addEventListener("click", () => {
+            sessionStorage.setItem(SELECTED_TEAM_KEY, JSON.stringify({ id: Number(card.dataset.teamId), name: card.dataset.teamName, country: card.dataset.teamCountry, logo: card.dataset.teamLogo, league: competition.league.name, leagueId: Number(competition.league.id), season: Number(season.year) }));
+            window.location.hash = "#team";
+        }));
+    } catch { target.innerHTML = `<div class="league-page__empty league-page__empty--inline"><span>API ERROR</span><h2>Could not load teams</h2><p>Please check your API key and try again.</p></div>`; }
 }
 
 function createLeaguePage() {
