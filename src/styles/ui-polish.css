@@ -101,6 +101,22 @@
 .league-page__empty p,
 .match-page__empty p { max-width: 460px; margin: 0 auto; color: #8b9991; font-size: 12px; line-height: 1.65; }
 
+.ui-state__retry {
+    margin-top: 17px;
+    min-height: 38px;
+    padding: 9px 17px;
+    border: 1px solid rgba(57, 255, 136, .32);
+    border-radius: 999px;
+    background: rgba(57, 255, 136, .08);
+    color: #d9ffe8;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .02em;
+    transition: background .2s ease, border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+.ui-state__retry:hover { background: rgba(57, 255, 136, .14); border-color: rgba(57, 255, 136, .56); transform: translateY(-1px); box-shadow: 0 0 20px rgba(57, 255, 136, .08); }
+.ui-state__retry:focus-visible { outline: 2px solid rgba(57, 255, 136, .72); outline-offset: 3px; }
+
 .directory-page__status { min-height: 16px; }
 
 @keyframes ui-spin { to { transform: rotate(360deg); } }
@@ -149,7 +165,6 @@
 .league-page__empty,
 .match-page__empty { border-radius: 18px; }
 
-/* Inputs and date controls now use the same focus and glow language. */
 .directory-page__search { transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease; }
 .directory-page__search:focus { transform: translateY(-1px); }
 .matches-page__date-button { transition: color .2s ease, background .2s ease, box-shadow .2s ease, transform .2s ease; }
@@ -180,5 +195,6 @@
     .matches-page__date-button,
     .team-page__tabs button,
     .league-page__tab,
-    .match-page__tab { transition: none; }
+    .match-page__tab,
+    .ui-state__retry { transition: none; }
 }
