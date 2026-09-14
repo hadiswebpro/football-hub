@@ -88,60 +88,28 @@
 .matches[hidden] { display: none; }
 
 .team-card { flex: 0 0 235px; scroll-snap-align: start; position: relative; min-height: 270px; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 18px 16px 14px; overflow: hidden; isolation: isolate; border: 1px solid rgba(57,255,136,.14); border-radius: 20px; background: linear-gradient(145deg, rgba(15,30,21,.96), rgba(5,12,8,.98)); box-shadow: 0 14px 35px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.04); cursor: pointer; text-align: center; transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease; }
-.team-card::before { content: ""; position: absolute; inset: -50%; z-index: -2; background: linear-gradient(115deg, transparent 38%, rgba(57,255,136,.1) 50%, transparent 62%); transform: translateX(-25%) rotate(8deg); transition: transform .7s ease; pointer-events: none; }
-.team-card::after { content: ""; position: absolute; width: 150px; height: 110px; left: 50%; bottom: -80px; transform: translateX(-50%); z-index: -1; border-radius: 50%; background: rgba(57,255,136,.13); filter: blur(28px); pointer-events: none; }
-.team-card:hover, .team-card:focus-visible { transform: translateY(-7px); border-color: rgba(57,255,136,.48); box-shadow: 0 18px 42px rgba(0,0,0,.42), 0 0 24px rgba(57,255,136,.14); outline: none; }
+.team-card::before { content: ""; position: absolute; inset: -45%; z-index: -2; background: linear-gradient(115deg, transparent 38%, rgba(57,255,136,.09) 50%, transparent 62%); transform: translateX(-25%) rotate(8deg); transition: transform .7s ease; pointer-events: none; }
+.team-card::after { content: ""; position: absolute; width: 150px; height: 120px; left: 50%; bottom: -90px; transform: translateX(-50%); z-index: -1; border-radius: 50%; background: rgba(57,255,136,.13); filter: blur(28px); pointer-events: none; }
+.team-card:hover, .team-card:focus-visible { transform: translateY(-7px); border-color: rgba(34,197,94,.52); box-shadow: 0 18px 42px rgba(0,0,0,.42), 0 0 22px rgba(57,255,136,.14); outline: none; }
 .team-card:hover::before, .team-card:focus-visible::before { transform: translateX(25%) rotate(8deg); }
-.team-card:active { transform: translateY(-2px) scale(.985); }
-.team-card__favorite { position: absolute; top: 12px; right: 12px; z-index: 4; width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.08); border-radius: 50%; background: rgba(255,255,255,.04); color: #64748b; font-size: 16px; line-height: 1; transition: .2s ease; }
-.team-card__favorite:hover, .team-card__favorite:focus-visible { color: #39ff88; background: rgba(57,255,136,.08); border-color: rgba(57,255,136,.25); box-shadow: 0 0 16px rgba(57,255,136,.18); transform: scale(1.06); outline: none; }
-.team-card__favorite.is-favorite { color: #cfc018; background: rgba(207,192,24,.08); border-color: rgba(207,192,24,.28); box-shadow: 0 0 14px rgba(207,192,24,.16); }
-.team-card__logo-wrap { position: relative; width: 108px; height: 108px; display: grid; place-items: center; margin-top: 6px; }
-.team-card__ring { position: absolute; inset: 8px; border: 1px solid rgba(57,255,136,.18); border-radius: 50%; box-shadow: 0 0 20px rgba(57,255,136,.08), inset 0 0 16px rgba(57,255,136,.04); transition: .35s ease; }
+.team-card__favorite { position: absolute; top: 12px; right: 12px; z-index: 4; width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.08); border-radius: 50%; background: rgba(255,255,255,.04); color: #64748b; font-size: 16px; }
+.team-card__favorite:hover, .team-card__favorite:focus-visible { color: #39ff88; background: rgba(57,255,136,.08); border-color: rgba(57,255,136,.25); box-shadow: 0 0 16px rgba(57,255,136,.16); outline: none; }
+.team-card__favorite.is-favorite { color: #cfc018; background: rgba(207,192,24,.08); border-color: rgba(207,192,24,.28); }
+.team-card__logo-wrap { position: relative; width: 104px; height: 104px; display: grid; place-items: center; margin-top: 2px; }
+.team-card__ring { position: absolute; inset: 7px; border: 1px solid rgba(57,255,136,.18); border-radius: 50%; box-shadow: 0 0 20px rgba(57,255,136,.08), inset 0 0 16px rgba(57,255,136,.04); transition: .35s ease; }
 .team-card:hover .team-card__ring, .team-card:focus-visible .team-card__ring { transform: scale(1.08); border-color: rgba(57,255,136,.55); box-shadow: 0 0 24px rgba(57,255,136,.16), inset 0 0 20px rgba(57,255,136,.08); }
-.team-logo { position: relative; z-index: 1; width: 70px; height: 70px; object-fit: contain; filter: drop-shadow(0 7px 9px rgba(5,8,7,.14)); transition: .35s ease; }
+.team-logo { position: relative; z-index: 1; width: 62px; height: 62px; object-fit: contain; filter: drop-shadow(0 7px 9px rgba(5,8,7,.18)); transition: .35s ease; }
 .team-card:hover .team-logo, .team-card:focus-visible .team-logo { transform: scale(1.08); filter: drop-shadow(0 0 11px rgba(57,255,136,.38)); }
 .team-card__info { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 5px; }
 .team-card__info h3 { max-width: 185px; overflow: hidden; color: #f8fafc; font-size: 16px; line-height: 1.25; text-overflow: ellipsis; white-space: nowrap; }
 .team-card__info p { color: #94a3a8; font-size: 11px; }
-.team-card__info span { padding: 4px 8px; border: 1px solid rgba(57,255,136,.14); border-radius: 999px; background: rgba(57,255,136,.06); color: #39ff88; font-size: 9px; font-weight: 800; }
+.team-card__info span { padding: 4px 8px; border: 1px solid rgba(57,255,136,.13); border-radius: 999px; background: rgba(57,255,136,.05); color: #39ff88; font-size: 8px; font-weight: 800; letter-spacing: .05em; }
 .team-card__footer { width: 100%; display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(255,255,255,.06); color: #94a3a8; font-size: 10px; font-weight: 700; }
-.team-card__arrow { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: rgba(57,255,136,.08); color: #39ff88; font-size: 13px; transition: .25s ease; }
+.team-card__arrow { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: rgba(57,255,136,.08); color: #39ff88; transition: .25s ease; }
 .team-card:hover .team-card__arrow, .team-card:focus-visible .team-card__arrow { transform: translate(2px,-2px); background: #39ff88; color: #050807; }
 
-@media (max-width: 1050px) { .match-card { flex-basis: 340px; } }
 @media (max-width: 640px) {
-    .matches, .teams { gap: 12px; padding: 2px 2px 16px; }
-    .match-card { flex-basis: 285px; min-height: 225px; padding: 14px 12px; }
-    .match-card__teams { gap: 6px; padding: 18px 0 14px; }
-    .match-card__logo-wrap { width: 50px; height: 50px; }
-    .match-card__logo-wrap img { width: 32px; height: 32px; }
-    .match-card__team strong { max-width: 78px; font-size: 10px; }
-    .match-card__score { font-size: 21px; }
-    .match-view-controls { margin-top: -4px; margin-bottom: 20px; }
-    .match-view-controls__button { min-width: 95px; padding: 8px 15px; }
-    .league-card { min-height: 285px; padding: 14px 11px 12px; gap: 9px; border-radius: 17px; }
-    .league-card__favorite { top: 9px; right: 9px; width: 29px; height: 29px; font-size: 15px; }
-    .league-card__topline { padding-right: 32px; }
-    .league-card__number { font-size: 8px; }
-    .league-card__status { padding: 3px 6px; font-size: 8px; }
-    .league-card__logo-wrap { width: 82px; height: 82px; }
-    .league-card__ring { inset: 5px; }
-    .league-logo { width: 52px; height: 52px; }
-    .league-info h3 { max-width: 135px; font-size: 14px; }
-    .league-card__country { font-size: 10px; }
-    .league-card__type { padding: 3px 7px; font-size: 8px; }
-    .league-card__dates { gap: 4px; font-size: 8px; }
-    .league-card__footer { padding-top: 8px; font-size: 9px; }
-    .league-card__arrow { width: 21px; height: 21px; font-size: 12px; }
-    .team-card { flex-basis: 205px; min-height: 245px; padding: 14px 12px 12px; border-radius: 17px; gap: 9px; }
-    .team-card__favorite { top: 9px; right: 9px; width: 29px; height: 29px; font-size: 14px; }
-    .team-card__logo-wrap { width: 84px; height: 84px; margin-top: 3px; }
-    .team-card__ring { inset: 5px; }
-    .team-logo { width: 53px; height: 53px; }
-    .team-card__info h3 { max-width: 155px; font-size: 13px; }
-    .team-card__info p { font-size: 9px; }
-    .team-card__info span { padding: 3px 6px; font-size: 8px; }
-    .team-card__footer { padding-top: 8px; font-size: 9px; }
-    .team-card__arrow { width: 21px; height: 21px; font-size: 11px; }
+    .team-card { flex-basis: 205px; min-height: 250px; padding: 15px 13px 12px; }
+    .team-card__logo-wrap { width: 90px; height: 90px; }
+    .team-logo { width: 54px; height: 54px; }
 }
