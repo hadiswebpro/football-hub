@@ -1,0 +1,58 @@
+/* Shared logo treatment: readable on dark neon cards while keeping the existing rings. */
+.team-card__logo-wrap,
+.league-card__logo-wrap,
+.match-card__logo-wrap {
+    background: #ffffff;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, .82), 0 8px 22px rgba(0, 0, 0, .22);
+}
+
+.team-card__logo-wrap,
+.league-card__logo-wrap {
+    border-radius: 50%;
+}
+
+.team-card__logo-wrap {
+    border: 1px solid rgba(255, 255, 255, .92);
+}
+
+.league-card__logo-wrap {
+    border: 1px solid rgba(255, 255, 255, .92);
+}
+
+.match-card__logo-wrap {
+    border-color: rgba(255, 255, 255, .9);
+    border-radius: 50%;
+}
+
+.team-card__logo-wrap .team-card__ring,
+.league-card__logo-wrap .league-card__ring {
+    inset: -5px;
+    border-color: rgba(57, 255, 136, .32);
+    box-shadow: 0 0 20px rgba(57, 255, 136, .1);
+    pointer-events: none;
+}
+
+.team-card__logo-wrap .team-logo,
+.league-card__logo-wrap .league-logo {
+    width: 64%;
+    height: 64%;
+    padding: 5px;
+    object-fit: contain;
+}
+
+.match-card__logo-wrap img {
+    width: 70%;
+    height: 70%;
+    padding: 4px;
+    object-fit: contain;
+}
+
+.team-card:hover .team-card__logo-wrap,
+.team-card:focus-visible .team-card__logo-wrap,
+.league-card:hover .league-card__logo-wrap,
+.league-card:focus-visible .league-card__logo-wrap,
+.match-card:hover .match-card__logo-wrap,
+.match-card:focus-visible .match-card__logo-wrap {
+    background: #ffffff;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, .92), 0 0 22px rgba(57, 255, 136, .12), 0 8px 22px rgba(0, 0, 0, .2);
+}
