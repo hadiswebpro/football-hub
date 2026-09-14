@@ -63,10 +63,30 @@ async function getAllTeams() {
     return sorted;
 }
 
+function createTeamSkeletons(count = 6) {
+    return Array.from({ length: count }, () => `
+        <article class="skeleton-card" aria-hidden="true">
+            <div class="skeleton-card__top">
+                <span class="skeleton skeleton--text skeleton--short"></span>
+                <span class="skeleton skeleton--circle"></span>
+            </div>
+            <div class="skeleton-card__body">
+                <span class="skeleton skeleton--logo"></span>
+                <span class="skeleton skeleton--title skeleton--short"></span>
+                <span class="skeleton skeleton--text skeleton--short"></span>
+            </div>
+            <div class="skeleton-card__footer">
+                <span class="skeleton skeleton--text skeleton--short"></span>
+                <span class="skeleton skeleton--text" style="width:28px"></span>
+            </div>
+        </article>
+    `).join("");
+}
+
 function createTeamsPage() {
     const app = document.querySelector("#app");
     if (!app) return;
-    app.innerHTML = `<section class="directory-page"><div class="directory-page__top"><div class="directory-page__intro"><span class="section-heading__eyebrow">CLUB DIRECTORY</span><h1>Teams</h1><p>Popular clubs first, then other active teams.</p></div><input class="directory-page__search" type="search" placeholder="Search teams…" aria-label="Search teams" data-team-search disabled></div><div class="directory-page__content"><div class="directory-page__status" data-team-status>Loading teams…</div><div class="teams directory-page__team-grid" data-teams></div></div></section>`;
+    app.innerHTML = `<section class="directory-page"><div class="directory-page__top"><div class="directory-page__intro"><span class="section-heading__eyebrow">CLUB DIRECTORY</span><h1>Teams</h1><p>Popular clubs first, then other active teams.</p></div><input class="directory-page__search" type="search" placeholder="Search teams…" aria-label="Search teams" data-team-search disabled></div><div class="directory-page__content"><div class="directory-page__status" data-team-status>Loading teams…</div><div class="teams directory-page__team-grid" data-teams><div class="skeleton-grid">${createTeamSkeletons()}</div></div></div></section>`;
     const target = app.querySelector("[data-teams]"), search = app.querySelector("[data-team-search]"), status = app.querySelector("[data-team-status]");
     let teams = [];
     const render = (query = "") => {
@@ -78,7 +98,7 @@ function createTeamsPage() {
         filtered.forEach((team) => target.appendChild(createTeamCard(team)));
     };
     const load = async () => {
-        target.innerHTML = `<div class="directory-page__loading"><div>Loading teams…</div></div>`;
+        target.innerHTML = `<div class="skeleton-grid">${createTeamSkeletons()}</div>`;
         status.textContent = "Loading teams…";
         search.disabled = true;
         try {
