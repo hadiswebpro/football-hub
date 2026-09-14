@@ -1,0 +1,106 @@
+/* Stage 3.1 — shared skeleton loading UI. */
+.skeleton {
+    position: relative;
+    overflow: hidden;
+    display: block;
+    background: rgba(148, 163, 168, .12);
+    border-radius: 10px;
+}
+
+.skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .08), transparent);
+    animation: skeleton-shimmer 1.35s ease-in-out infinite;
+}
+
+.skeleton--text { height: 11px; }
+.skeleton--title { height: 18px; }
+.skeleton--circle { width: 58px; height: 58px; border-radius: 50%; }
+.skeleton--logo { width: 62px; height: 62px; border-radius: 50%; }
+.skeleton--wide { width: 100%; }
+.skeleton--short { width: 58%; }
+
+.skeleton-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.skeleton-card {
+    min-height: 230px;
+    padding: 18px;
+    border: 1px solid rgba(57, 255, 136, .11);
+    border-radius: 22px;
+    background: linear-gradient(145deg, rgba(8, 17, 12, .96), rgba(4, 10, 7, .92));
+    box-shadow: 0 14px 35px rgba(0, 0, 0, .22);
+}
+
+.skeleton-card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 34px;
+}
+
+.skeleton-card__body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 22px 10px 18px;
+}
+
+.skeleton-card__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 5px;
+    padding-top: 13px;
+    border-top: 1px solid rgba(148, 163, 168, .09);
+}
+
+.skeleton-match {
+    min-height: 250px;
+    padding: 18px;
+    border: 1px solid rgba(57, 255, 136, .11);
+    border-radius: 22px;
+    background: linear-gradient(145deg, rgba(8, 17, 12, .96), rgba(4, 10, 7, .92));
+}
+
+.skeleton-match__teams {
+    display: grid;
+    grid-template-columns: 1fr 70px 1fr;
+    align-items: center;
+    gap: 12px;
+    margin-top: 28px;
+}
+
+.skeleton-match__team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.skeleton-match__score { display: flex; justify-content: center; gap: 7px; }
+
+@keyframes skeleton-shimmer {
+    100% { transform: translateX(100%); }
+}
+
+@media (max-width: 900px) {
+    .skeleton-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+    .skeleton-grid { grid-template-columns: 1fr; }
+    .skeleton-card { min-height: 210px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .skeleton::after { animation: none; }
+}
