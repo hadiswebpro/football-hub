@@ -202,3 +202,23 @@ button { cursor: pointer; }
 .matches-page__loading[hidden] {
     display: none;
 }
+
+
+.directory-loader--inline {
+    min-height: 110px;
+}
+
+.matches-page__load-more {
+    display: block;
+    margin: 24px auto 8px;
+    padding: 11px 20px;
+    border: 1px solid rgba(22, 163, 74, .2);
+    border-radius: 999px;
+    background: #ffffff;
+    color: #15803d;
+    font-weight: 700;
+}
+
+.matches-page__load-more:hover {
+    background: #f0fdf4;
+}
