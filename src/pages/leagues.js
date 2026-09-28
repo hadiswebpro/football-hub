@@ -1,7 +1,5 @@
 import { getCurrentLeagues } from "../api/seasons";
 import createLeagueCard from "../components/leagueCard";
-import { renderContentSkeletons } from "../components/skeletons";
-
 const IMPORTANT_LEAGUES = [2, 39, 140, 135, 78, 61, 3, 848, 4];
 
 function getLeagueSortIndex(league) {
@@ -33,7 +31,7 @@ function createLeagueSkeletons(count = 6) {
 function createLeaguesPage() {
     const app = document.querySelector("#app");
     if (!app) return;
-    app.innerHTML = `<section class="directory-page"><div class="directory-page__top"><div><span class="section-heading__eyebrow">COMPETITION DIRECTORY</span><h1>Leagues</h1><p>Browse competitions currently in progress.</p></div><input class="directory-page__search" type="search" placeholder="Search leagues…" aria-label="Search leagues" data-league-search disabled></div><div class="directory-page__content"><div class="directory-page__status" data-league-status>Loading leagues…</div><div class="leagues directory-page__grid" data-leagues><div class="skeleton-grid">${renderContentSkeletons(6)}</div></div></div></section>`;
+    app.innerHTML = `<section class="directory-page"><div class="directory-page__top"><div><span class="section-heading__eyebrow">COMPETITION DIRECTORY</span><h1>Leagues</h1><p>Browse competitions currently in progress.</p></div><input class="directory-page__search" type="search" placeholder="Search leagues…" aria-label="Search leagues" data-league-search disabled></div><div class="directory-page__content"><div class="directory-page__status" data-league-status>Loading leagues…</div><div class="leagues directory-page__grid" data-leagues></div></div></section>`;
     const target = app.querySelector("[data-leagues]"), search = app.querySelector("[data-league-search]"), status = app.querySelector("[data-league-status]");
     let leagues = [];
     const render = (query = "") => {
@@ -45,7 +43,7 @@ function createLeaguesPage() {
         filtered.forEach((competition) => target.appendChild(createLeagueCard(competition)));
     };
     const load = async () => {
-        target.innerHTML = `<div class="skeleton-grid">${createLeagueSkeletons()}</div>`;
+        target.innerHTML = `<div class="directory-loader"><span class="loader-spinner"></span><span>Loading leagues…</span></div>`;
         status.textContent = "Loading leagues…";
         search.disabled = true;
         try {
