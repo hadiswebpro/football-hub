@@ -104,3 +104,23 @@
 @media (prefers-reduced-motion: reduce) {
     .skeleton::after { animation: none; }
 }
+
+
+.skeleton-card--team { min-height: 250px; }
+.skeleton-grid--teams { width: 100%; }
+.skeleton-content-grid { display: grid; gap: 18px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.skeleton-content-card {
+    min-height: 140px;
+    padding: 22px;
+    border: 1px solid rgba(57, 255, 136, .11);
+    border-radius: 22px;
+    background: linear-gradient(145deg, rgba(8, 17, 12, .96), rgba(4, 10, 7, .92));
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.skeleton-detail { display: flex; flex-direction: column; gap: 24px; }
+.skeleton-detail__hero { display: grid; grid-template-columns: 70px 1fr 70px; align-items: center; gap: 20px; }
+.skeleton-detail__tabs { display: flex; gap: 28px; padding: 16px 0; border-bottom: 1px solid rgba(148,163,168,.1); }
+@media (max-width: 900px) { .skeleton-content-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .skeleton-content-grid { grid-template-columns: 1fr; } }
