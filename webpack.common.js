@@ -1,5 +1,6 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const webpack = require("webpack");
 
 module.exports = {
     entry: "./src/index.js",
@@ -11,6 +12,9 @@ module.exports = {
     },
 
     plugins: [
+        new webpack.DefinePlugin({
+            "process.env.API_FOOTBALL_KEY": JSON.stringify(process.env.API_FOOTBALL_KEY || ""),
+        }),
         new HtmlWebpackPlugin({
             template: "./src/template.html",
             favicon: "./favicon/favicon.ico",
