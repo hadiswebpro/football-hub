@@ -222,3 +222,29 @@ button { cursor: pointer; }
 .matches-page__load-more:hover {
     background: #f0fdf4;
 }
+
+
+.directory-loader--error {
+    width: min(360px, 100%);
+    min-height: 150px;
+    margin: 40px auto;
+    padding: 28px 24px;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, .06);
+    text-align: center;
+    justify-content: center;
+}
+
+.directory-loader--error strong {
+    display: block;
+    color: #0f172a;
+    font-size: 18px;
+    margin-bottom: 6px;
+}
+
+.directory-loader--error span {
+    color: #64748b;
+    font-size: 13px;
+}
