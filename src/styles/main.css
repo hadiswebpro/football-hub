@@ -190,6 +190,11 @@ button { cursor: pointer; }
     min-height: 320px;
 }
 
+.directory-page__team-grid > .team-loader {
+    grid-column: 1 / -1;
+    width: 100%;
+}
+
 .matches-page__groups[hidden] {
     display: none;
 }
