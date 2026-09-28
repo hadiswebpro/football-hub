@@ -11,7 +11,7 @@
 .directory-page__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .directory-page__team-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; min-width: 0; }
 .directory-page__loading,.directory-page__empty { grid-column: 1 / -1; min-height: 180px; display: grid; place-items: center; padding: 30px; box-sizing: border-box; border: 1px solid rgba(57,255,136,.14); border-radius: 20px; background: rgba(8,17,12,.9); color: #aeb9b3; text-align: center; }
-.directory-loader--page { grid-column: 1 / -1; min-height: 420px; width: 100%; }
+.directory-loader--page { grid-column: 1 / -1; min-height: 420px; width: 100%; justify-self: stretch; align-self: stretch; text-align: center; }
 .directory-loader--error { width: min(360px, 100%); min-height: 150px; margin: 0 auto; padding: 28px 24px; box-sizing: border-box; border: 1px solid rgba(57,255,136,.16); border-radius: 16px; background: rgba(8,17,12,.96); box-shadow: 0 10px 30px rgba(0,0,0,.18); color: #fff; text-align: center; justify-content: center; }
 .directory-loader--error strong { display: block; margin-bottom: 6px; color: #fff; font-size: 18px; }
 .directory-loader--error span { color: #fff; font-size: 13px; }
