@@ -174,7 +174,7 @@ function createTeamsPage() {
     });
 
     const load = async () => {
-        target.innerHTML = `<div class="directory-loader" aria-live="polite"><span class="loader-spinner"></span><span>Loading teams…</span></div>`;
+        target.innerHTML = `<div class="directory-loader directory-loader--page" aria-live="polite"><span class="loader-spinner"></span><span>Loading teams…</span></div>`;
         status.textContent = "";
         search.disabled = true;
 
