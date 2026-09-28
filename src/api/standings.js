@@ -1,5 +1,5 @@
 const API_BASE = "https://v3.football.api-sports.io";
-const API_KEY = "";
+const API_KEY = "d4730f42e8c6a592e925f1c464799433";
 
 async function getLeagueStandings(leagueId, season) {
     const response = await fetch(`${API_BASE}/standings?league=${encodeURIComponent(leagueId)}&season=${encodeURIComponent(season)}`, {
