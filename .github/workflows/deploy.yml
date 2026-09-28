@@ -26,6 +26,8 @@ jobs:
         run: npm ci
 
       - name: Build
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
         run: npm run build
 
       - name: Deploy to gh-pages
