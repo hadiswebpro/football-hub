@@ -1,5 +1,5 @@
 const API_BASE = "https://v3.football.api-sports.io";
-const API_KEY = "";
+const API_KEY = process.env.API_FOOTBALL_KEY || "";
 
 const memoryCache = new Map();
 const pendingRequests = new Map();
