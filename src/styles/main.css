@@ -172,3 +172,28 @@ button { cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
     .loader-spinner { animation-duration: 1.5s; }
 }
+
+
+.directory-loader {
+    min-height: 260px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.directory-page__team-grid:has(.team-loader) {
+    min-height: 320px;
+}
+
+.matches-page__groups[hidden] {
+    display: none;
+}
+
+.matches-page__loading[hidden] {
+    display: none;
+}
