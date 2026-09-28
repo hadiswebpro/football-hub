@@ -134,7 +134,7 @@ function createTeamsPage() {
             <input class="directory-page__search" type="search" placeholder="Search teams…" aria-label="Search teams" data-team-search disabled>
         </div>
         <div class="directory-page__content">
-            <div class="directory-page__status" data-team-status>Loading teams…</div>
+            <div class="directory-page__status" data-team-status></div>
             <div class="teams directory-page__team-grid" data-teams></div>
         </div>
     </section>`;
@@ -191,7 +191,7 @@ function createTeamsPage() {
 
     const load = async () => {
         target.innerHTML = `<div class="team-loader" aria-hidden="true"><span class="loader-spinner"></span><span>Loading teams…</span></div>`;
-        status.textContent = "Loading teams…";
+        status.textContent = "";
         search.disabled = true;
 
         try {
