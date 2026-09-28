@@ -74,12 +74,25 @@ function createMatchesPage() {
             loading.innerHTML = `<div class="directory-loader directory-loader--inline"><span class="loader-spinner"></span><span>Loading more matches…</span></div>`;
         }
 
+        let timedOut = false;
+        let errorTimer;
+
         try {
+            errorTimer = window.setTimeout(() => {
+                timedOut = true;
+                loading.hidden = false;
+                groups.hidden = true;
+                loading.innerHTML = `<div class="directory-loader directory-loader--error" role="alert"><strong>Could not load</strong><span>Check your internet connection.</span></div>`;
+            }, 15000);
+
             const page = pageCache.get(dateKey) ?? 1;
             const data = await getMatchesByDate(date, page);
             const response = data.response ?? [];
             activeFixtures = reset ? response : [...activeFixtures, ...response];
             pageCache.set(dateKey, page + 1);
+
+            window.clearTimeout(errorTimer);
+            if (timedOut) return;
 
             loading.hidden = true;
             groups.hidden = false;
@@ -102,10 +115,14 @@ function createMatchesPage() {
                 groups.appendChild(more);
             }
         } catch {
-            loading.hidden = false;
-            groups.hidden = true;
-            loading.innerHTML = `<div class="matches-page__empty"><div><span>API ERROR</span><h2>Could not load matches</h2><p>Please check your API key or connection and try again.</p><button class="ui-state__retry" type="button" data-match-retry>Retry</button></div></div>`;
-            loading.querySelector("[data-match-retry]").addEventListener("click", () => loadDate(dateKey, true));
+            window.clearTimeout(errorTimer);
+            if (timedOut) return;
+
+            window.setTimeout(() => {
+                loading.hidden = false;
+                groups.hidden = true;
+                loading.innerHTML = `<div class="directory-loader directory-loader--error" role="alert"><strong>Could not load</strong><span>Check your internet connection.</span></div>`;
+            }, 15000); 
         }
     };
     search.addEventListener("input", () => { renderCurrent(); const more = app.querySelector("[data-load-more]"); if (more) more.hidden = Boolean(search.value.trim()); });
