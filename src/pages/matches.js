@@ -59,21 +59,56 @@ function createMatchesPage() {
     const labels = { yesterday: "YESTERDAY", today: "TODAY", tomorrow: "TOMORROW" }, offsets = { yesterday: -1, today: 0, tomorrow: 1 };
     let activeFixtures = [];
     const renderCurrent = () => { const normalizedQuery = search.value.trim().toLowerCase(); const visible = activeFixtures.filter((fixture) => { if (!normalizedQuery) return true; const match = normalizeFixture(fixture); return `${match.home.name} ${match.away.name} ${match.league} ${match.country}`.toLowerCase().includes(normalizedQuery); }); count.textContent = `${visible.length} match${visible.length === 1 ? "" : "es"}`; renderLeagueGroups(groups, activeFixtures, search.value); };
-    const loadDate = async (dateKey) => {
-        if (cache.has(dateKey)) { activeFixtures = cache.get(dateKey); loading.hidden = true; groups.hidden = false; resultLabel.textContent = labels[dateKey]; renderCurrent(); return; }
-        loading.hidden = false; groups.hidden = true;
-        loading.innerHTML = `<div class="directory-loader"><span class="loader-spinner"></span><span>Loading matches…</span></div>`;
+    const pageCache = new Map();
+
+    const loadDate = async (dateKey, reset = true) => {
+        const date = getTehranDate(offsets[dateKey]);
+        if (reset) {
+            activeFixtures = [];
+            pageCache.set(dateKey, 1);
+            loading.hidden = false;
+            groups.hidden = true;
+            loading.innerHTML = `<div class="directory-loader"><span class="loader-spinner"></span><span>Loading matches…</span></div>`;
+        } else {
+            loading.hidden = false;
+            loading.innerHTML = `<div class="directory-loader directory-loader--inline"><span class="loader-spinner"></span><span>Loading more matches…</span></div>`;
+        }
+
         try {
-            activeFixtures = (await getMatchesByDate(getTehranDate(offsets[dateKey]))).response ?? [];
-            cache.set(dateKey, activeFixtures);
-            loading.hidden = true; groups.hidden = false; resultLabel.textContent = labels[dateKey]; renderCurrent();
+            const page = pageCache.get(dateKey) ?? 1;
+            const data = await getMatchesByDate(date, page);
+            const response = data.response ?? [];
+            activeFixtures = reset ? response : [...activeFixtures, ...response];
+            pageCache.set(dateKey, page + 1);
+
+            loading.hidden = true;
+            groups.hidden = false;
+            resultLabel.textContent = labels[dateKey];
+            renderCurrent();
+
+            const totalPages = Number(data.paging?.total ?? 1);
+            const hasMore = page < totalPages;
+
+            let more = app.querySelector("[data-load-more]");
+            if (more) more.remove();
+
+            if (hasMore && !search.value.trim()) {
+                more = document.createElement("button");
+                more.type = "button";
+                more.className = "matches-page__load-more";
+                more.dataset.loadMore = "true";
+                more.textContent = "See more matches";
+                more.addEventListener("click", () => loadDate(dateKey, false));
+                groups.appendChild(more);
+            }
         } catch {
-            loading.hidden = false; groups.hidden = true;
+            loading.hidden = false;
+            groups.hidden = true;
             loading.innerHTML = `<div class="matches-page__empty"><div><span>API ERROR</span><h2>Could not load matches</h2><p>Please check your API key or connection and try again.</p><button class="ui-state__retry" type="button" data-match-retry>Retry</button></div></div>`;
-            loading.querySelector("[data-match-retry]").addEventListener("click", () => loadDate(dateKey));
+            loading.querySelector("[data-match-retry]").addEventListener("click", () => loadDate(dateKey, true));
         }
     };
-    search.addEventListener("input", renderCurrent);
+    search.addEventListener("input", () => { renderCurrent(); const more = app.querySelector("[data-load-more]"); if (more) more.hidden = Boolean(search.value.trim()); });
     app.querySelectorAll("[data-date]").forEach((button) => button.addEventListener("click", () => { app.querySelectorAll("[data-date]").forEach((item) => { const active = item === button; item.classList.toggle("is-active", active); item.setAttribute("aria-selected", String(active)); }); loadDate(button.dataset.date); }));
     loadDate("today");
 }
