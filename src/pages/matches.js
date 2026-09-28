@@ -20,7 +20,7 @@ function normalizeFixture(fixture) {
 }
 
 function getLeaguePriority(id) {
-    const order = [2, 39, 140, 135, 78, 61, 3, 848, 4];
+    const order = [2, 39, 140, 135, 78, 61, 3, 848, 4, 88, 94, 71, 144, 203, 179, 207, 119, 169, 62, 128, 218, 103, 106, 113, 72, 98, 108, 233, 36, 40];
     const index = order.indexOf(Number(id));
     return index === -1 ? Number.MAX_SAFE_INTEGER : index;
 }
@@ -61,7 +61,8 @@ function createMatchesPage() {
     const renderCurrent = () => { const normalizedQuery = search.value.trim().toLowerCase(); const visible = activeFixtures.filter((fixture) => { if (!normalizedQuery) return true; const match = normalizeFixture(fixture); return `${match.home.name} ${match.away.name} ${match.league} ${match.country}`.toLowerCase().includes(normalizedQuery); }); count.textContent = `${visible.length} match${visible.length === 1 ? "" : "es"}`; renderLeagueGroups(groups, activeFixtures, search.value); };
     const loadDate = async (dateKey) => {
         if (cache.has(dateKey)) { activeFixtures = cache.get(dateKey); loading.hidden = true; groups.hidden = false; resultLabel.textContent = labels[dateKey]; renderCurrent(); return; }
-        loading.hidden = true; groups.hidden = false;
+        loading.hidden = false; groups.hidden = true;
+        loading.innerHTML = `<div class="directory-loader"><span class="loader-spinner"></span><span>Loading matches…</span></div>`;
         try {
             activeFixtures = (await getMatchesByDate(getTehranDate(offsets[dateKey]))).response ?? [];
             cache.set(dateKey, activeFixtures);
