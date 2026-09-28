@@ -1,6 +1,5 @@
 import { getMatchesByDate } from "../api/matches";
 import createMatchCard from "../components/matchcard";
-import { renderMatchSkeletons } from "../components/skeletons";
 
 const TEHRAN_TIMEZONE = "Asia/Tehran";
 
@@ -55,14 +54,14 @@ function renderLeagueGroups(container, fixtures, query = "") {
 function createMatchesPage() {
     const app = document.querySelector("#app");
     if (!app) return;
-    app.innerHTML = `<section class="matches-page"><div class="directory-page__top"><div><span class="section-heading__eyebrow">MATCH CENTER</span><h1>Matches</h1><p>Follow the matches happening yesterday, today and tomorrow.</p></div><input class="directory-page__search" type="search" placeholder="Search teams or leagues…" aria-label="Search matches" data-match-search></div><div class="matches-page__date-row"><div class="matches-page__date-controls" role="tablist" aria-label="Match dates"><button class="matches-page__date-button" type="button" data-date="yesterday" role="tab" aria-selected="false">Yesterday</button><button class="matches-page__date-button is-active" type="button" data-date="today" role="tab" aria-selected="true">Today</button><button class="matches-page__date-button" type="button" data-date="tomorrow" role="tab" aria-selected="false">Tomorrow</button></div></div><div class="matches-page__summary"><span class="matches-page__result-label">TODAY</span><strong data-count>Loading…</strong></div><div class="matches-page__loading" data-matches-loading>${renderMatchSkeletons(6)}</div><div class="matches-page__groups" data-matches-groups hidden></div></section>`;
+    app.innerHTML = `<section class="matches-page"><div class="directory-page__top"><div><span class="section-heading__eyebrow">MATCH CENTER</span><h1>Matches</h1><p>Follow the matches happening yesterday, today and tomorrow.</p></div><input class="directory-page__search" type="search" placeholder="Search teams or leagues…" aria-label="Search matches" data-match-search></div><div class="matches-page__date-row"><div class="matches-page__date-controls" role="tablist" aria-label="Match dates"><button class="matches-page__date-button" type="button" data-date="yesterday" role="tab" aria-selected="false">Yesterday</button><button class="matches-page__date-button is-active" type="button" data-date="today" role="tab" aria-selected="true">Today</button><button class="matches-page__date-button" type="button" data-date="tomorrow" role="tab" aria-selected="false">Tomorrow</button></div></div><div class="matches-page__summary"><span class="matches-page__result-label">TODAY</span><strong data-count>Loading…</strong></div><div class="matches-page__loading" data-matches-loading hidden></div><div class="matches-page__groups" data-matches-groups hidden></div></section>`;
     const groups = app.querySelector("[data-matches-groups]"), loading = app.querySelector("[data-matches-loading]"), count = app.querySelector("[data-count]"), resultLabel = app.querySelector(".matches-page__result-label"), search = app.querySelector("[data-match-search]"), cache = new Map();
     const labels = { yesterday: "YESTERDAY", today: "TODAY", tomorrow: "TOMORROW" }, offsets = { yesterday: -1, today: 0, tomorrow: 1 };
     let activeFixtures = [];
     const renderCurrent = () => { const normalizedQuery = search.value.trim().toLowerCase(); const visible = activeFixtures.filter((fixture) => { if (!normalizedQuery) return true; const match = normalizeFixture(fixture); return `${match.home.name} ${match.away.name} ${match.league} ${match.country}`.toLowerCase().includes(normalizedQuery); }); count.textContent = `${visible.length} match${visible.length === 1 ? "" : "es"}`; renderLeagueGroups(groups, activeFixtures, search.value); };
     const loadDate = async (dateKey) => {
         if (cache.has(dateKey)) { activeFixtures = cache.get(dateKey); loading.hidden = true; groups.hidden = false; resultLabel.textContent = labels[dateKey]; renderCurrent(); return; }
-        loading.hidden = false; groups.hidden = true; loading.innerHTML = renderMatchSkeletons(6);
+        loading.hidden = true; groups.hidden = false;
         try {
             activeFixtures = (await getMatchesByDate(getTehranDate(offsets[dateKey]))).response ?? [];
             cache.set(dateKey, activeFixtures);
