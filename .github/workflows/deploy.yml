@@ -25,6 +25,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify API key secret is available
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+        run: |
+          if [ -z "$API_FOOTBALL_KEY" ]; then
+            echo "API_FOOTBALL_KEY secret is missing."
+            exit 1
+          fi
+          echo "API_FOOTBALL_KEY secret is available."
+
       - name: Build
         env:
           API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
