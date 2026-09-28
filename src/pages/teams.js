@@ -1,5 +1,5 @@
 import createTeamCard from "../components/teamCard";
-import { getLeagueTeams, getNationalTeams, searchTeams as searchTeamsApi } from "../api/teams";
+import { getLeagueTeams, getNationalTeams } from "../api/teams";
 import { getCurrentLeagues } from "../api/seasons";
 
 const POPULAR_LEAGUES = [2, 39, 140, 135, 78, 61, 3, 848, 4, 88, 94, 71, 144, 203, 179, 207, 119, 169, 62, 128, 218, 103, 106, 113, 72, 98, 108, 233, 36, 40];
@@ -145,8 +145,6 @@ function createTeamsPage() {
     const search = app.querySelector("[data-team-search]");
     const status = app.querySelector("[data-team-status]");
     let teams = [];
-    let searchTimer = null;
-    let searchRequest = 0;
 
     const render = (query = "", extraTeams = []) => {
         const q = query.trim().toLowerCase();
@@ -175,47 +173,45 @@ function createTeamsPage() {
         filtered.forEach((team) => target.appendChild(createTeamCard(team)));
     };
 
-    const runSearch = async (query) => {
-        const q = query.trim();
+    const runSearch = (query) => {
+        const q = query.trim().toLowerCase();
+
         if (!q) {
             render("");
             return;
         }
 
-        const requestId = ++searchRequest;
-        try {
-            const results = await searchTeamsApi(q);
-            if (requestId !== searchRequest) return;
+        const filteredTeams = teams.filter((team) => {
+            const searchableText = [
+                team.name,
+                team.country,
+                team.league
+            ]
+                .filter(Boolean)
+                .join(" ")
+                .toLowerCase();
 
-            const apiTeams = results
-                .map(({ team, league }) => ({
-                    id: team?.id,
-                    name: team?.name ?? "Team",
-                    country: team?.country ?? "International",
-                    league: league?.name ?? "",
-                    leagueId: league?.id ?? 0,
-                    logo: team?.logo ?? "",
-                    type: team?.national ? "national" : "club"
-                }))
-                .filter((team) => team.id);
+            return searchableText.includes(q);
+        });
 
-            render(q, apiTeams);
-        } catch {
-            if (requestId !== searchRequest) return;
-            render(q);
-        }
+        renderLocalResults(q, filteredTeams);
     };
 
-    search.addEventListener("input", (event) => {
-        clearTimeout(searchTimer);
-        const value = event.target.value;
-        if (!value.trim()) {
-            searchRequest++;
-            render("");
+    const renderLocalResults = (query, filteredTeams) => {
+        target.innerHTML = "";
+        status.textContent = `${filteredTeams.length} teams found`;
+
+        if (!filteredTeams.length) {
+            target.innerHTML = `<div class="directory-page__empty"><div><h2>No teams found</h2><p>Try another team, country or league.</p></div></div>`;
             return;
         }
-        status.textContent = "Searching teams…";
-        searchTimer = setTimeout(() => runSearch(value), 350);
+
+        filteredTeams.forEach((team) => target.appendChild(createTeamCard(team)));
+    };
+
+
+    search.addEventListener("input", (event) => {
+        runSearch(event.target.value);
     });
 
     const load = async () => {
