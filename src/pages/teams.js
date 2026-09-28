@@ -13,7 +13,7 @@ const POPULAR_NATIONAL_TEAMS = [
     "Italy", "Netherlands", "Belgium", "Croatia", "Uruguay", "Colombia", "Mexico",
     "United States", "Japan", "Morocco", "Iran"
 ];
-const CACHE_KEY = "football-hub-teams-cache-v3";
+const CACHE_KEY = "football-hub-teams-cache-v4";
 const CACHE_TTL = 1000 * 60 * 60;
 
 function getPriority(name, list) {
@@ -61,15 +61,21 @@ async function getAllTeams() {
     if (cached?.length) return cached;
 
     const currentLeagues = await getCurrentLeagues();
-    const selectedLeagues = currentLeagues.filter(
-        (item) => item.league?.id && item.seasons?.some((season) => season.current)
-    );
+    const selectedLeagues = currentLeagues
+        .filter((item) => item.league?.id && item.seasons?.some((season) => season.current))
+        .sort((a, b) => getLeaguePriority(a.league.id) - getLeaguePriority(b.league.id));
 
-    const leagueResults = await Promise.allSettled(selectedLeagues.map(async (competition) => {
+    const leagueResults = [];
+    const BATCH_SIZE = 6;
+    for (let index = 0; index < selectedLeagues.length; index += BATCH_SIZE) {
+        const batch = selectedLeagues.slice(index, index + BATCH_SIZE);
+        const results = await Promise.allSettled(batch.map(async (competition) => {
         const season = competition.seasons.find((item) => item.current)?.year;
         const data = await getLeagueTeams(competition.league.id, season);
         return { data, competition, season };
-    }));
+        }));
+        leagueResults.push(...results);
+    }
 
     let nationalResponse = [];
     try {
@@ -161,29 +167,7 @@ function createTeamsPage() {
         filtered.forEach((team) => target.appendChild(createTeamCard(team)));
     };
 
-    const runSearch = (query) => {
-        const q = query.trim().toLowerCase();
-
-        if (!q) {
-            render("");
-            return;
-        }
-
-        const filteredTeams = teams.filter((team) => {
-            const searchableText = [
-                team.name,
-                team.country,
-                team.league
-            ]
-                .filter(Boolean)
-                .join(" ")
-                .toLowerCase();
-
-            return searchableText.includes(q);
-        });
-
-        renderLocalResults(q, filteredTeams);
-    };
+    const runSearch = (query) => render(query);
 
     search.addEventListener("input", (event) => {
         runSearch(event.target.value);
