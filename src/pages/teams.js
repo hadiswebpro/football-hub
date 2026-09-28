@@ -135,9 +135,7 @@ function createTeamsPage() {
         </div>
         <div class="directory-page__content">
             <div class="directory-page__status" data-team-status>Loading teams…</div>
-            <div class="teams directory-page__team-grid" data-teams>
-                <div class="team-loader" aria-hidden="true"><span class="loader-spinner"></span><span>Loading teams…</span></div>
-            </div>
+            <div class="teams directory-page__team-grid" data-teams></div>
         </div>
     </section>`;
 
@@ -146,21 +144,11 @@ function createTeamsPage() {
     const status = app.querySelector("[data-team-status]");
     let teams = [];
 
-    const render = (query = "", extraTeams = []) => {
+    const render = (query = "") => {
         const q = query.trim().toLowerCase();
-        const merged = [...teams];
-        const ids = new Set(merged.map((team) => Number(team.id)));
-
-        extraTeams.forEach((team) => {
-            if (team?.id && !ids.has(Number(team.id))) {
-                merged.push(team);
-                ids.add(Number(team.id));
-            }
-        });
-
         const filtered = q
-            ? merged.filter((team) => `${team.name} ${team.country} ${team.league}`.toLowerCase().includes(q))
-            : merged;
+            ? teams.filter((team) => [team.name, team.country, team.league].filter(Boolean).join(" ").toLowerCase().includes(q))
+            : teams;
 
         target.innerHTML = "";
         status.textContent = q ? `${filtered.length} teams found` : `${teams.length} teams`;
@@ -196,19 +184,6 @@ function createTeamsPage() {
 
         renderLocalResults(q, filteredTeams);
     };
-
-    const renderLocalResults = (query, filteredTeams) => {
-        target.innerHTML = "";
-        status.textContent = `${filteredTeams.length} teams found`;
-
-        if (!filteredTeams.length) {
-            target.innerHTML = `<div class="directory-page__empty"><div><h2>No teams found</h2><p>Try another team, country or league.</p></div></div>`;
-            return;
-        }
-
-        filteredTeams.forEach((team) => target.appendChild(createTeamCard(team)));
-    };
-
 
     search.addEventListener("input", (event) => {
         runSearch(event.target.value);
