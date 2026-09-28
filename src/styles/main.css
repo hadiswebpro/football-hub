@@ -248,3 +248,17 @@ button { cursor: pointer; }
     color: #64748b;
     font-size: 13px;
 }
+
+
+.directory-loader--page {
+    min-height: calc(100vh - 300px);
+}
+
+.directory-loader--error {
+    min-height: 170px;
+    margin: 0 auto;
+}
+
+.matches-page__summary[hidden] {
+    display: none;
+}
