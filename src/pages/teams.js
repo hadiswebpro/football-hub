@@ -2,7 +2,7 @@ import createTeamCard from "../components/teamCard";
 import { getLeagueTeams, getNationalTeams, searchTeams as searchTeamsApi } from "../api/teams";
 import { getCurrentLeagues } from "../api/seasons";
 
-const POPULAR_LEAGUES = [2, 39, 140, 135, 78, 61, 3, 848, 4];
+const POPULAR_LEAGUES = [2, 39, 140, 135, 78, 61, 3, 848, 4, 88, 94, 71, 144, 203, 179, 207, 119, 169, 62, 128, 218, 103, 106, 113, 72, 98, 108, 233, 36, 40];
 const POPULAR_TEAMS = [
     "Real Madrid", "Barcelona", "Manchester City", "Manchester United", "Liverpool", "Arsenal",
     "Bayern Munich", "Paris Saint Germain", "Chelsea", "Inter", "AC Milan", "Juventus",
@@ -13,7 +13,7 @@ const POPULAR_NATIONAL_TEAMS = [
     "Italy", "Netherlands", "Belgium", "Croatia", "Uruguay", "Colombia", "Mexico",
     "United States", "Japan", "Morocco", "Iran"
 ];
-const CACHE_KEY = "football-hub-teams-cache-v2";
+const CACHE_KEY = "football-hub-teams-cache-v3";
 const CACHE_TTL = 1000 * 60 * 60;
 
 function getPriority(name, list) {
@@ -61,11 +61,12 @@ async function getAllTeams() {
     if (cached?.length) return cached;
 
     const currentLeagues = await getCurrentLeagues();
-    const selectedLeagues = currentLeagues.filter((item) => POPULAR_LEAGUES.includes(Number(item.league?.id)));
+    const selectedLeagues = currentLeagues.filter(
+        (item) => item.league?.id && item.seasons?.some((season) => season.current)
+    );
 
     const leagueResults = await Promise.allSettled(selectedLeagues.map(async (competition) => {
-        const season = competition.seasons?.find((item) => item.current)?.year;
-        if (!season) throw new Error("No current season");
+        const season = competition.seasons.find((item) => item.current)?.year;
         const data = await getLeagueTeams(competition.league.id, season);
         return { data, competition, season };
     }));
@@ -135,7 +136,7 @@ function createTeamsPage() {
         <div class="directory-page__content">
             <div class="directory-page__status" data-team-status>Loading teams…</div>
             <div class="teams directory-page__team-grid" data-teams>
-                <div class="skeleton-grid skeleton-grid--teams">${renderTeamSkeletons(9)}</div>
+                <div class="team-loader" aria-hidden="true"><span class="loader-spinner"></span><span>Loading teams…</span></div>
             </div>
         </div>
     </section>`;
@@ -218,7 +219,7 @@ function createTeamsPage() {
     });
 
     const load = async () => {
-        target.innerHTML = `<div class="skeleton-grid skeleton-grid--teams">${renderTeamSkeletons(9)}</div>`;
+        target.innerHTML = `<div class="team-loader" aria-hidden="true"><span class="loader-spinner"></span><span>Loading teams…</span></div>`;
         status.textContent = "Loading teams…";
         search.disabled = true;
 
