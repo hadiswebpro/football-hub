@@ -43,19 +43,33 @@ function createLeaguesPage() {
         filtered.forEach((competition) => target.appendChild(createLeagueCard(competition)));
     };
     const load = async () => {
-        target.innerHTML = `<div class="directory-loader"><span class="loader-spinner"></span><span>Loading leagues…</span></div>`;
-        status.textContent = "Loading leagues…";
+        target.innerHTML = `<div class="directory-loader directory-loader--page" aria-live="polite"><span class="loader-spinner"></span><span>Loading leagues…</span></div>`;
+        status.textContent = "";
         search.disabled = true;
+
+        let timedOut = false;
+        let errorTimer;
+
         try {
+            errorTimer = window.setTimeout(() => {
+                timedOut = true;
+                target.innerHTML = `<div class="directory-loader directory-loader--error" role="alert"><strong>Could not load</strong><span>Check your internet connection.</span></div>`;
+            }, 15000);
+
             const data = await getCurrentLeagues();
             leagues = [...data].sort((a, b) => getLeagueSortIndex(a) - getLeagueSortIndex(b) || (a.league?.name ?? "").localeCompare(b.league?.name ?? ""));
             if (!leagues.length) throw new Error("No leagues returned");
+
+            window.clearTimeout(errorTimer);
+            if (timedOut) return;
+
             search.disabled = false;
             render(search.value);
         } catch {
-            status.textContent = "Unable to load leagues";
-            target.innerHTML = `<div class="directory-page__empty"><div><h2>Could not load leagues</h2><p>Please check your API key or connection and try again.</p><button class="ui-state__retry" type="button" data-league-retry>Retry</button></div></div>`;
-            target.querySelector("[data-league-retry]").addEventListener("click", load);
+            window.clearTimeout(errorTimer);
+            if (timedOut) return;
+
+            target.innerHTML = `<div class="directory-loader directory-loader--error" role="alert"><strong>Could not load</strong><span>Check your internet connection.</span></div>`;
         }
     };
     search.addEventListener("input", (event) => render(event.target.value));
