@@ -34,6 +34,10 @@ function writePersistentCache(key, value) {
 }
 
 async function request(path, ttl = TTL.stable) {
+    if (!API_KEY) {
+        throw new Error("API_FOOTBALL_KEY is missing from the production build.");
+    }
+
     const key = getCacheKey(path);
     const now = Date.now();
     const cached = memoryCache.get(key);
@@ -54,7 +58,10 @@ async function request(path, ttl = TTL.stable) {
         if (!response.ok) throw new Error(`Football API request failed: ${response.status}`);
 
         const data = await response.json();
-        if (data.errors && Object.keys(data.errors).length > 0) throw new Error("Football API returned an error.");
+        if (data.errors && Object.keys(data.errors).length > 0) {
+            console.error("Football API error:", data.errors);
+            throw new Error("Football API returned an error.");
+        }
 
         const value = { data, expiresAt: Date.now() + ttl };
         memoryCache.set(key, value);
