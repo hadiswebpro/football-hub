@@ -6,8 +6,8 @@ async function getLiveMatches() {
     return request("/fixtures?live=all&timezone=Asia%2FTehran", TTL.live);
 }
 
-async function getMatchesByDate(date) {
-    return request(`/fixtures?date=${encodeURIComponent(date)}&timezone=${encodeURIComponent(TEHRAN_TIMEZONE)}`, TTL.fixtures);
+async function getMatchesByDate(date, page = 1) {
+    return request(`/fixtures?date=${encodeURIComponent(date)}&page=${encodeURIComponent(page)}&timezone=${encodeURIComponent(TEHRAN_TIMEZONE)}`, TTL.fixtures);
 }
 
 async function getLeagueFixtures(leagueId, season, next = 20) {
